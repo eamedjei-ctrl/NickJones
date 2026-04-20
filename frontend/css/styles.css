@@ -73,7 +73,7 @@ body.sidebar-collapsed .sidebar {
   cursor: pointer;
   padding: 10px;
   border-radius: 8px;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   width: 44px;
@@ -384,12 +384,20 @@ tr:hover td {
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .page-header {
-    position: sticky;
+    position: relative;
     top: 0;
-    padding: 16px 20px;
+    padding: 20px 20px 32px;
     margin: -20px -20px 24px -20px;
     border-bottom: 1px solid var(--border);
     z-index: 900;
+  }
+
+  .sidebar-toggle {
+    display: flex;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1001;
   }
 
   .page-title h1 {

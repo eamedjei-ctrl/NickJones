@@ -703,13 +703,14 @@ tr:hover td {
   .sidebar-toggle {
     display: flex;
     position: absolute;
-    top: 18px;
-    left: 18px;
+    top: 14px;
+    left: 14px;
+    z-index: 1001;
   }
 
-  .dashboard-header {
-    position: relativer {
+  .page-header {
     position: relative;
+    padding-top: 70px;
   }
 
   .dashboard-main {
