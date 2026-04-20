@@ -40,10 +40,10 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('loginForm').addEventListener('submit', (e) => {
+      document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
-        const user = Auth.login(email);
+        const user = await Auth.login(email);
         
         if (user) {
           if (user.role === 'Driver') window.location.href = 'driver.html';

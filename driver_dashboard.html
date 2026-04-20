@@ -123,7 +123,7 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = State.getCurrentUser();
       if (!user || user.role !== 'Driver') { window.location.href = 'index.html'; return; }
 
@@ -152,9 +152,9 @@
         shell.classList.add('sidebar-collapsed-state');
       }
 
-      const renderRequests = () => {
-        const requests = State.getRequests().filter(r => r.user_id === user.id);
-        const earnings = State.getEarnings();
+      const renderRequests = async () => {
+        const requests = (await State.getRequests()).filter(r => r.user_id === user.id);
+        const earnings = await State.getEarnings();
         const tbody = document.getElementById('requestsTableBody');
         
         // Metrics calculation
@@ -179,17 +179,17 @@
         `).join('');
       };
 
-      renderRequests();
+      await renderRequests();
 
-      document.getElementById('serviceRequestForm').addEventListener('submit', (e) => {
+      document.getElementById('serviceRequestForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        State.addRequest({
+        await State.addRequest({
           pickup_location: document.getElementById('pickup').value,
           destination: document.getElementById('destination').value,
           user_id: user.id
         });
         document.getElementById('serviceRequestForm').reset();
-        renderRequests();
+        await renderRequests();
       });
     });
   </script>

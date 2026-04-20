@@ -170,7 +170,7 @@
   <button class="fab" title="Quick Action">⚡</button>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = State.getCurrentUser();
       if (!user || user.role !== 'Operator') { window.location.href = 'index.html'; return; }
 
@@ -195,9 +195,9 @@
         shell.classList.add('sidebar-collapsed-state');
       }
 
-      const renderRequests = () => {
-        const requests = State.getRequests();
-        const users = State.getUsers();
+      const renderRequests = async () => {
+        const requests = await State.getRequests();
+        const users = await State.getUsers();
         
         document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'Pending').length;
         document.getElementById('activeCount').textContent = requests.filter(r => r.status === 'In Progress').length;
@@ -271,7 +271,7 @@
         `).join('');
       };
 
-      renderRequests();
+      await renderRequests();
     });
   </script>
 </body>

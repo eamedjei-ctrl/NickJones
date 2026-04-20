@@ -143,9 +143,9 @@
       // Initialize UI Interactions
       UI.initSidebar();
 
-      const renderRequests = () => {
-        const requests = State.getRequests();
-        const users = State.getUsers();
+      const renderRequests = async () => {
+        const requests = await State.getRequests();
+        const users = await State.getUsers();
         const tbody = document.getElementById('requestsTableBody');
         
         document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'Pending').length;
@@ -178,12 +178,12 @@
         }).join('');
       };
 
-      window.handleStatus = (id, status) => {
-        Operator.updateRequestStatus(id, status);
-        renderRequests();
+      window.handleStatus = async (id, status) => {
+        await Operator.updateRequestStatus(id, status);
+        await renderRequests();
       };
 
-      renderRequests();
+      await renderRequests();
     });
   </script>
 </body>

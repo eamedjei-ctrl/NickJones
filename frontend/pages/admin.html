@@ -120,17 +120,17 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = Auth.checkAuth('Administrator');
       if (!user) return;
 
       // Initialize UI Interactions
       UI.initSidebar();
 
-      const renderData = () => {
-        const users = State.getUsers();
-        const requests = State.getRequests();
-        const earnings = State.getEarnings();
+      const renderData = async () => {
+        const users = await State.getUsers();
+        const requests = await State.getRequests();
+        const earnings = await State.getEarnings();
 
         document.getElementById('totalUsers').textContent = users.length;
         document.getElementById('totalRequests').textContent = requests.length;
@@ -157,7 +157,7 @@
         `).join('');
       };
 
-      renderData();
+      await renderData();
     });
   </script>
 </body>

@@ -38,10 +38,10 @@
   </main>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
-      const user = State.login(email);
+      const user = await State.login(email);
       
       if (user) {
         if (user.role === 'Driver') window.location.href = 'driver_dashboard.html';

@@ -1,7 +1,8 @@
 // js/auth.js - Authentication logic
 const Auth = {
-  login: function(email) {
-    const user = State.getUsers().find(u => u.email === email);
+  login: async function(email) {
+    const users = await State.getUsers();
+    const user = users.find(u => u.email === email);
     if (user) {
       State.setCurrentUser(user);
       return user;
