@@ -38,10 +38,26 @@
   </main>
 
   <script>
+    // Demo users for testing without Supabase
+    const DEMO_USERS = {
+      'eli@towprecision.com': { id: 'u1', name: 'Eli Martinez', email: 'eli@towprecision.com', role: 'Driver' },
+      'sara@towprecision.com': { id: 'u2', name: 'Sara Malik', email: 'sara@towprecision.com', role: 'Operator' },
+      'alex@towprecision.com': { id: 'u3', name: 'Alex Chen', email: 'alex@towprecision.com', role: 'Administrator' }
+    };
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
-      const user = await State.login(email);
+      
+      // Try API first, fall back to demo if API fails
+      let user = null;
+      try {
+        user = await State.login(email);
+      } catch (err) {
+        console.warn('API failed, using demo mode:', err);
+        user = DEMO_USERS[email] || null;
+        if (user) State.setCurrentUser(user);
+      }
       
       if (user) {
         if (user.role === 'Driver') window.location.href = 'driver_dashboard.html';
