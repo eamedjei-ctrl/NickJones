@@ -13,7 +13,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'name, email, and role are required' });
     }
 
-    const { data, error } = await supabase.from('users').insert([{ name, email, role }]).single();
+    // Generate a simple ID
+    const id = 'u' + Date.now() + Math.random().toString(36).substr(2, 5);
+
+    const { data, error } = await supabase.from('users').insert([{ id, name, email, role }]).single();
     if (error) return res.status(500).json({ error: error.message });
     return res.status(201).json({ user: data });
   }
