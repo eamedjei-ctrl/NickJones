@@ -126,7 +126,26 @@ const ScrollReveal = {
   }
 };
 
+const MobileSidebar = {
+  init: function() {
+    const toggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    if (!toggle || !sidebar) return;
+
+    toggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove('collapsed');
+      }
+    });
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   TimeTheme.apply();
   ScrollReveal.init();
+  MobileSidebar.init();
 });
