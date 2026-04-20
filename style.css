@@ -31,6 +31,45 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body.day-mode {
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+body.night-mode {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+body.day-mode .login-page {
+  background: #f8fafc;
+}
+
+body.night-mode .login-page {
+  background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
+}
+
+body.day-mode .sidebar {
+  background: #ffffff;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+body.night-mode .sidebar {
+  background: rgba(15, 23, 42, 0.95);
+  color: #cbd5e1;
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+body.night-mode .sidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.night-mode .sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #60a5fa;
+}
+
 /* Layout */
 .login-page {
   display: flex;
@@ -658,19 +697,27 @@ tr:hover td {
 .drivers-page {
   position: relative;
   min-height: 100vh;
-  background-image: url('https://images.pexels.com/photos/7614250/pexels-photo-7614250.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+  background-color: #ffffff;
+}
+
+body.night-mode .drivers-page {
+  background-image: url('https://images.pexels.com/photos/1181380/pexels-photo-1181380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
 
-.drivers-page::before {
+body.night-mode .drivers-page::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.48);
+  background: rgba(15, 23, 42, 0.5);
   pointer-events: none;
+}
+
+body.day-mode .drivers-page::before {
+  display: none;
 }
 
 .dashboard-shell {

@@ -101,3 +101,15 @@ const State = {
 
 // Initialize state
 State.init();
+
+const TimeTheme = {
+  apply: function() {
+    const hour = new Date().getHours();
+    document.body.classList.remove('day-mode', 'night-mode');
+    document.body.classList.add(hour >= 6 && hour < 18 ? 'day-mode' : 'night-mode');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  TimeTheme.apply();
+});
