@@ -204,71 +204,144 @@
         
         const container = document.getElementById('requestsContainer');
         
-        // Mocking the request list based on the image
-        const mockRequests = [
-          {
-            id: 'R-102',
-            title: 'Silver BMW M3 - Engine Stall',
-            location: 'I-95 North, Exit 12 (Hard Shoulder)',
-            customer: 'Marcus Thorne',
-            distance: '2.4 miles',
-            time: 'Requested 2m ago',
-            type: 'urgent',
-            badge: 'IMMEDIATE ACTION',
-            icon: '🚗'
-          },
-          {
-            id: 'R-103',
-            title: 'Ford F-150 - Flat Tire',
-            location: '442 Oak Street, West Downtown',
-            customer: 'Sarah Jenkins',
-            distance: '4.1 miles',
-            time: 'Requested 8m ago',
-            type: 'standard',
-            badge: 'STANDARD',
-            icon: '🛻'
-          },
-          {
-            id: 'R-104',
-            title: 'Tesla Model 3 - Lockout',
-            location: 'Grand Plaza Parking, B2',
-            customer: 'David Choi',
-            distance: '1.2 miles',
-            time: 'Dispatched 14m ago',
-            type: 'in-progress',
-            badge: 'IN PROGRESS',
-            icon: '🚙'
+        // Use real API data instead of mock data
+        container.innerHTML = requests.map(r => {
+          const driver = users.find(u => u.id === r.user_id);
+          const driverName = driver ? driver.name : 'Unassigned';
+          
+          // Determine request type and styling based on status
+          let type, badge, icon;
+          if (r.status === 'Pending') {
+            type = 'urgent';
+            badge = 'NEEDS DRIVER';
+            icon = '🚨';
+          } else if (r.status === 'In Progress') {
+            type = 'in-progress';
+            badge = 'IN PROGRESS';
+            icon = '🚛';
+          } else {
+            type = 'completed';
+            badge = 'COMPLETED';
+            icon = '✅';
           }
-        ];
 
-        container.innerHTML = mockRequests.map(r => `
-          <div class="request-card ${r.type}">
-            <div class="car-image">${r.icon}</div>
-            <div class="request-info">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                  <div class="request-title">${r.title}</div>
-                  <div style="font-size: 0.8125rem; color: var(--muted); display: flex; align-items: center; gap: 4px;">
-                    📍 ${r.location}
+          return `
+            <div class="request-card ${type}">
+              <div class="car-image">${icon}</div>
+              <div class="request-info">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div>
+                    <div class="request-title">Tow Request #${r.id}</div>
+                    <div style="font-size: 0.8125rem; color: var(--muted); display: flex; align-items: center; gap: 4px;">
+                      📍 ${r.pickup_location} → ${r.destination}
+                    </div>
                   </div>
+                  <span class="badge badge-${type}">${badge}</span>
                 </div>
-                <span class="badge badge-${r.type}">${r.badge}</span>
+                <div class="request-meta">
+                  <div class="request-meta-item">👤 ${driverName}</div>
+                  <div class="request-meta-item">📋 ${r.status}</div>
+                  <div class="request-meta-item">🆔 ${r.id}</div>
+                </div>
               </div>
-              <div class="request-meta">
-                <div class="request-meta-item">👤 ${r.customer}</div>
-                <div class="request-meta-item">📍 ${r.distance} away</div>
-                <div class="request-meta-item">🕒 ${r.time}</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${r.status === 'Pending' ? 
+                  `<button class="primary-btn" style="border-radius: 10px; font-weight: 700; background: var(--success); color: white; border: none; padding: 10px 24px;" onclick="assignDriver('${r.id}')">Assign Driver</button>` :
+                  r.status === 'In Progress' ?
+                  `<button class="primary-btn" style="border-radius: 10px; font-weight: 700; background: #d1fae5; color: #065f46; border: none; padding: 10px 24px;" onclick="completeRequest('${r.id}')">Mark Complete</button>` :
+                  `<span style="color: var(--muted); font-size: 0.75rem; font-weight: 500;">Completed</span>`
+                }
               </div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              ${r.type === 'in-progress' ? 
-                `<button class="secondary-btn" style="border-radius: 10px; font-weight: 700; background: #e0e7ff; color: #4f46e5; border: none; padding: 10px 24px;">Details</button>` :
-                `<button class="primary-btn" style="border-radius: 10px; font-weight: 700; background: #d1fae5; color: #065f46; border: none; padding: 10px 24px;">Accept</button>
-                 <button class="secondary-btn" style="border-radius: 10px; font-weight: 700; border: none; background: transparent; color: var(--muted);">Reject</button>`
-              }
-            </div>
+          `;
+        }).join('');
+
+        // Update metrics with real data
+        document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'Pending').length;
+        document.getElementById('activeCount').textContent = requests.filter(r => r.status === 'In Progress').length;
+      };
+
+      // Add New Dispatch functionality
+      const newDispatchBtn = document.querySelector('.sidebar-footer .primary-btn');
+      newDispatchBtn.addEventListener('click', () => {
+        showNewDispatchModal();
+      });
+
+      // Global functions for button clicks
+      window.assignDriver = async (requestId) => {
+        await State.updateRequestStatus(requestId, 'In Progress');
+        await renderRequests();
+      };
+
+      window.completeRequest = async (requestId) => {
+        await State.updateRequestStatus(requestId, 'Completed');
+        await renderRequests();
+      };
+
+      const showNewDispatchModal = () => {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.5); display: flex; align-items: center;
+          justify-content: center; z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+          <div style="background: white; padding: 32px; border-radius: 16px; width: 500px; max-width: 90vw;">
+            <h3 style="margin: 0 0 24px 0; font-size: 1.25rem;">Create New Tow Request</h3>
+            <form id="newRequestForm">
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Pickup Location</label>
+                <input type="text" id="pickupLocation" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+              </div>
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Destination</label>
+                <input type="text" id="destination" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+              </div>
+              <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Assign to Driver</label>
+                <select id="driverSelect" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                  <option value="">Select a driver...</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" onclick="this.closest('div').parentElement.remove()" style="padding: 12px 24px; border: 1px solid var(--border); background: white; border-radius: 8px;">Cancel</button>
+                <button type="submit" style="padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 8px;">Create Request</button>
+              </div>
+            </form>
           </div>
-        `).join('');
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Populate driver dropdown
+        const populateDrivers = async () => {
+          const users = await State.getUsers();
+          const drivers = users.filter(u => u.role === 'Driver');
+          const select = modal.querySelector('#driverSelect');
+          drivers.forEach(driver => {
+            const option = document.createElement('option');
+            option.value = driver.id;
+            option.textContent = driver.name;
+            select.appendChild(option);
+          });
+        };
+        
+        populateDrivers();
+        
+        // Handle form submission
+        modal.querySelector('#newRequestForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const pickupLocation = modal.querySelector('#pickupLocation').value;
+          const destination = modal.querySelector('#destination').value;
+          const userId = modal.querySelector('#driverSelect').value;
+          
+          if (pickupLocation && destination && userId) {
+            await State.addRequest({ pickup_location: pickupLocation, destination, user_id: userId });
+            modal.remove();
+            await renderRequests();
+          }
+        });
       };
 
       await renderRequests();
