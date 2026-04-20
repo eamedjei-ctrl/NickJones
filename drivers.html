@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TowPrecision Drivers</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="brand-mark">
+        <div class="brand-icon">🚚</div>
+        <div>
+          <p class="brand-label">Control Center</p>
+          <p class="brand-subtitle">Fleet Management</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="index.html">Dashboard</a>
+        <a class="nav-link" href="#">Dispatch Queue</a>
+        <a class="nav-link" href="#">Fleet Map</a>
+        <a class="nav-link active" href="drivers.html">Drivers</a>
+        <a class="nav-link" href="#">Analytics</a>
+        <a class="nav-link" href="#">User Management</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="new-dispatch-btn" type="button">+ New Dispatch</button>
+        <div class="footer-links">
+          <a class="support-link" href="#">Support</a>
+          <a class="logout-link" href="#">Logout</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div class="brand-search">
+          <div class="dashboard-title">
+            <h1>Drivers</h1>
+            <p>Manage your driver roster, availability, and active assignments.</p>
+          </div>
+          <label class="search-field">
+            <span class="search-icon">🔍</span>
+            <input type="search" placeholder="Search drivers..." />
+          </label>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" type="button">🔔</button>
+          <button class="icon-btn" type="button">⚙️</button>
+          <div class="user-chip">
+            <span class="user-avatar">AC</span>
+            <div>
+              <p class="user-name">Alex Chen</p>
+              <p class="user-meta">Fleet ID: #2944</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="driver-overview card">
+        <div class="panel-header split">
+          <div>
+            <h2>Driver Overview</h2>
+            <p>Summary of driver availability and status across your fleet.</p>
+          </div>
+          <button class="secondary-btn" type="button">Add Driver</button>
+        </div>
+        <div class="driver-grid">
+          <article class="driver-card">
+            <p class="metric-label">Available</p>
+            <p class="metric-value">12</p>
+            <strong>Drivers ready for new assignments</strong>
+          </article>
+          <article class="driver-card">
+            <p class="metric-label">On Route</p>
+            <p class="metric-value">8</p>
+            <strong>Drivers currently serving jobs</strong>
+          </article>
+          <article class="driver-card">
+            <p class="metric-label">Today’s Jobs</p>
+            <p class="metric-value">24</p>
+            <strong>Jobs completed or in progress</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="activity-panel card">
+        <div class="panel-header split">
+          <div>
+            <h2>Driver Roster</h2>
+            <p>Review active drivers, vehicles, and current job status.</p>
+          </div>
+          <label class="search-field">
+            <span class="search-icon">🔍</span>
+            <input type="search" placeholder="Filter by name, vehicle, or status" />
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="driver-table">
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Vehicle</th>
+                <th>Status</th>
+                <th>Last Job</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="avatar-cell">
+                  <span class="driver-avatar">EL</span>
+                  <div>
+                    <strong>Eli Martinez</strong>
+                    <p>Senior Tow Operator</p>
+                  </div>
+                </td>
+                <td>Tow Truck 11</td>
+                <td><span class="driver-status">Available</span></td>
+                <td>Battery Jumpstart</td>
+                <td class="actions-cell"><button type="button">View</button></td>
+              </tr>
+              <tr>
+                <td class="avatar-cell">
+                  <span class="driver-avatar">SM</span>
+                  <div>
+                    <strong>Sara Malik</strong>
+                    <p>Heavy Duty Specialist</p>
+                  </div>
+                </td>
+                <td>Flatbed 7</td>
+                <td><span class="driver-status busy">On Route</span></td>
+                <td>Heavy Extraction</td>
+                <td class="actions-cell"><button type="button">View</button></td>
+              </tr>
+              <tr>
+                <td class="avatar-cell">
+                  <span class="driver-avatar">JV</span>
+                  <div>
+                    <strong>Jason Voss</strong>
+                    <p>Roadside Technician</p>
+                  </div>
+                </td>
+                <td>Service Van 3</td>
+                <td><span class="driver-status offline">Offline</span></td>
+                <td>Vehicle Inspection</td>
+                <td class="actions-cell"><button type="button">View</button></td>
+              </tr>
+              <tr>
+                <td class="avatar-cell">
+                  <span class="driver-avatar">NB</span>
+                  <div>
+                    <strong>Nina Brooks</strong>
+                    <p>Dispatcher Lead</p>
+                  </div>
+                </td>
+                <td>Tow Truck 2</td>
+                <td><span class="driver-status">Available</span></td>
+                <td>Emergency Tow</td>
+                <td class="actions-cell"><button type="button">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

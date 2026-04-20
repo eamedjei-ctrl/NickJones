@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Overview | TowPrecision</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-mark">
+        <span>🚚 TowPrecision</span>
+      </div>
+      
+      <div class="nav-section-label">Fleet Overview</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="#">
+          <span>📊</span> System Dashboard
+        </a>
+        <a class="nav-link" href="#">
+          <span>👥</span> User Management
+        </a>
+        <a class="nav-link" href="#">
+          <span>💵</span> Financial Records
+        </a>
+      </nav>
+
+      <div class="nav-section-label">Administration</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="#">
+          <span>⚙️</span> System Settings
+        </a>
+        <a class="nav-link" href="#">
+          <span>🛡️</span> Security Logs
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a class="nav-link" href="#" onclick="State.logout()">
+          <span>🚪</span> Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="page-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+            <span>☰</span>
+          </button>
+          <div class="page-title">
+            <h1>System Overview</h1>
+            <p>Fleet-wide metrics and financial performance</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="secondary-btn" style="height: 36px; padding: 0 16px; font-size: 0.8rem;">Export Report</button>
+          <div style="width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: grid; place-items: center; font-weight: 700;">AD</div>
+        </div>
+      </header>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Revenue</div>
+          <div class="metric-value" id="totalEarnings">$0.00</div>
+          <div style="font-size: 0.75rem; color: var(--success); font-weight: 600; margin-top: 4px;">↑ 12% from last month</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Jobs</div>
+          <div class="metric-value" id="totalRequests">0</div>
+          <div style="font-size: 0.75rem; color: var(--muted); font-weight: 500; margin-top: 4px;">98% completion rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Users</div>
+          <div class="metric-value" id="totalUsers">0</div>
+          <div style="font-size: 0.75rem; color: var(--success); font-weight: 600; margin-top: 4px;">All systems nominal</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+        <section class="card">
+          <div class="card-header">
+            <h3>Fleet User Roster</h3>
+            <button class="primary-btn" style="height: 32px; padding: 0 12px; font-size: 0.75rem;">Add User</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Recent Financials</h3>
+            <span style="font-size: 0.75rem; color: var(--muted);">Last 10 transactions</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Job ID</th>
+                  <th>Distance</th>
+                  <th>Revenue</th>
+                </tr>
+              </thead>
+              <tbody id="earningsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="card" style="margin-top: 32px;">
+        <div class="card-header">
+          <h3>System Performance</h3>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+          <div style="text-align: center;">
+            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">UPTIME</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--success);">99.9%</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">LATENCY</div>
+            <div style="font-size: 1.25rem; font-weight: 700;">45ms</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">ACTIVE DISPATCHERS</div>
+            <div style="font-size: 1.25rem; font-weight: 700;">4</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">FLEET HEALTH</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--success);">Optimal</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = State.getCurrentUser();
+      if (!user || user.role !== 'Administrator') { window.location.href = 'index.html'; return; }
+
+      // Sidebar Toggle Logic
+      const shell = document.querySelector('.dashboard-shell');
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.getElementById('sidebarToggle');
+      
+      const toggleSidebar = () => {
+        sidebar.classList.toggle('collapsed');
+        shell.classList.toggle('sidebar-collapsed-state');
+      };
+
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSidebar();
+      });
+
+      // Default to collapsed on mobile
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('collapsed');
+        shell.classList.add('sidebar-collapsed-state');
+      }
+
+      const renderData = () => {
+        const users = State.getUsers();
+        const requests = State.getRequests();
+        const earnings = State.getEarnings();
+
+        document.getElementById('totalUsers').textContent = users.length;
+        document.getElementById('totalRequests').textContent = requests.length;
+        const totalEarned = earnings.reduce((acc, curr) => acc + curr.estimated_earnings, 0);
+        document.getElementById('totalEarnings').textContent = `$${totalEarned.toFixed(2)}`;
+
+        document.getElementById('usersTableBody').innerHTML = users.map(u => `
+          <tr>
+            <td>
+              <div style="font-weight: 600;">${u.name}</div>
+              <div style="font-size: 0.75rem; color: var(--muted);">${u.email}</div>
+            </td>
+            <td><span style="font-size: 0.8rem; font-weight: 500;">${u.role}</span></td>
+            <td><span class="badge badge-completed">Active</span></td>
+          </tr>
+        `).join('');
+
+        document.getElementById('earningsTableBody').innerHTML = earnings.slice(-10).reverse().map(e => `
+          <tr>
+            <td><span style="font-weight: 600; color: var(--accent);">#${e.request_id}</span></td>
+            <td>${e.distance} mi</td>
+            <td><span style="font-weight: 600; color: var(--success);">+$${e.estimated_earnings.toFixed(2)}</span></td>
+          </tr>
+        `).join('');
+      };
+
+      renderData();
+    });
+  </script>
+</body>
+</html>
