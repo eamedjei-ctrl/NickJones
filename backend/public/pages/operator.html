@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operator Dashboard | TowPrecision</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/api.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/operator.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+</head>
+<body class="sidebar-collapsed">
+  <div class="dashboard-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-mark" style="justify-content: space-between; align-items: center;">
+        <span>🚚 TowPrecision</span>
+      </div>
+      
+      <div class="nav-section-label">Fleet Operations</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="#">
+          <span>📡</span> Dispatch Queue
+        </a>
+        <a class="nav-link" href="#">
+          <span>🌍</span> Fleet Live Map
+        </a>
+        <a class="nav-link" href="#">
+          <span>✅</span> Completed Jobs
+        </a>
+      </nav>
+
+      <div class="nav-section-label">Communication</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="#">
+          <span>💬</span> Driver Chat
+        </a>
+        <a class="nav-link" href="#">
+          <span>📞</span> Support Center
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a class="nav-link" href="#" onclick="Auth.logout()">
+          <span>🚪</span> Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="page-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+            <span>☰</span>
+          </button>
+          <div class="page-title">
+            <h1>Dispatch Center</h1>
+            <p>Real-time fleet monitoring and job assignment</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="background: #ecfdf5; color: #065f46; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+            System Operational
+          </div>
+          <div style="width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: grid; place-items: center; font-weight: 700;" id="userInitials">OP</div>
+        </div>
+      </header>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Pending Requests</div>
+          <div class="metric-value" id="pendingCount">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Dispatches</div>
+          <div class="metric-value" id="activeCount">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Avg. Response Time</div>
+          <div class="metric-value">14m</div>
+        </div>
+      </div>
+
+      <section class="card">
+        <div class="card-header">
+          <h3>Active Queue</h3>
+          <div style="display: flex; gap: 8px;">
+            <input type="search" placeholder="Search by driver..." style="margin-bottom: 0; width: 240px; height: 36px;" />
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Pickup Address</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; margin-top: 32px;">
+        <article class="card">
+          <div class="card-header">
+            <h3>Live Fleet Tracking</h3>
+          </div>
+          <div style="background: #f1f5f9; height: 300px; border-radius: 8px; border: 1px solid var(--border); display: grid; place-items: center;">
+            <div style="text-align: center; color: var(--muted);">
+              <div style="font-size: 2rem; margin-bottom: 8px;">🗺️</div>
+              <div style="font-size: 0.875rem;">High-Precision Fleet Map API</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <h3>System Notifications</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="padding: 12px; border-radius: 8px; background: #fffbeb; border-left: 4px solid #f59e0b;">
+              <div style="font-weight: 600; font-size: 0.875rem; color: #92400e;">Weather Alert</div>
+              <div style="font-size: 0.75rem; color: #b45309; margin-top: 2px;">Heavy rain expected in North Sector.</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = Auth.checkAuth('Operator');
+      if (!user) return;
+
+      document.getElementById('userInitials').textContent = user.name.split(' ').map(n => n[0]).join('');
+
+      // Initialize UI Interactions
+      UI.initSidebar();
+
+      const renderRequests = async () => {
+        const requests = await State.getRequests();
+        const users = await State.getUsers();
+        const tbody = document.getElementById('requestsTableBody');
+        
+        document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'Pending').length;
+        document.getElementById('activeCount').textContent = requests.filter(r => r.status === 'In Progress').length;
+        
+        tbody.innerHTML = requests.reverse().map(r => {
+          const driver = users.find(u => u.id === r.user_id);
+          let actionBtn = '';
+          
+          if (r.status === 'Pending') {
+            actionBtn = `<button class="primary-btn" style="height: 32px; padding: 0 12px; font-size: 0.75rem;" onclick="handleStatus('${r.id}', 'In Progress')">Assign Driver</button>`;
+          } else if (r.status === 'In Progress') {
+            actionBtn = `<button class="primary-btn" style="height: 32px; padding: 0 12px; font-size: 0.75rem; background: var(--success);" onclick="handleStatus('${r.id}', 'Completed')">Confirm Delivery</button>`;
+          } else {
+            actionBtn = `<span style="color: var(--muted); font-size: 0.75rem; font-weight: 500;">Archived</span>`;
+          }
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight: 600;">${driver ? driver.name : 'Unassigned'}</div>
+                <div style="font-size: 0.75rem; color: var(--muted);">ID: #${r.user_id}</div>
+              </td>
+              <td>${r.pickup_location}</td>
+              <td>${r.destination}</td>
+              <td><span class="badge badge-${r.status.toLowerCase().replace(' ', '-')}">${r.status}</span></td>
+              <td style="text-align: right;">${actionBtn}</td>
+            </tr>
+          `;
+        }).join('');
+      };
+
+      window.handleStatus = async (id, status) => {
+        await Operator.updateRequestStatus(id, status);
+        await renderRequests();
+      };
+
+      await renderRequests();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Driver Dashboard | TowPrecision</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/api.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/driver.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+</head>
+<body class="sidebar-collapsed">
+  <div class="dashboard-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-mark" style="justify-content: space-between; align-items: center;">
+        <span>🚚 TowPrecision</span>
+      </div>
+      
+      <div class="nav-section-label">Main Menu</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="#">
+          <span>📋</span> Service Requests
+        </a>
+        <a class="nav-link" href="#">
+          <span>🗺️</span> Active Jobs
+        </a>
+        <a class="nav-link" href="#">
+          <span>💰</span> My Earnings
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a class="nav-link" href="#" onclick="Auth.logout()">
+          <span>🚪</span> Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="page-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+            <span>☰</span>
+          </button>
+          <div class="page-title">
+            <h1>Driver Portal</h1>
+            <p>Welcome back, <span id="userName">Driver</span></p>
+          </div>
+        </div>
+        <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
+          <div style="text-align: right;">
+            <div style="font-weight: 600; font-size: 0.875rem;" id="userFullName">Full Name</div>
+            <div style="font-size: 0.75rem; color: var(--muted);">Fleet ID: #D-2024</div>
+          </div>
+          <div style="width: 40px; height: 40px; background: var(--accent); color: white; border-radius: 50%; display: grid; place-items: center; font-weight: 700;" id="userInitials">DR</div>
+        </div>
+      </header>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Completed Jobs</div>
+          <div class="metric-value" id="completedCount">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Request</div>
+          <div class="metric-value" id="activeStatus">None</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Today's Earnings</div>
+          <div class="metric-value" id="todayEarned">$0.00</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
+        <section class="card">
+          <div class="card-header">
+            <h3>New Service Request</h3>
+          </div>
+          <form id="serviceRequestForm">
+            <div class="form-group">
+              <label for="pickup">Pickup Location</label>
+              <input id="pickup" type="text" placeholder="Enter full address" required />
+            </div>
+            <div class="form-group">
+              <label for="destination">Destination</label>
+              <input id="destination" type="text" placeholder="Enter full address" required />
+            </div>
+            <button class="primary-btn" type="submit" style="width: 100%;">Submit Request</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Route Preview</h3>
+            <span style="font-size: 0.75rem; color: var(--muted);">Real-time tracking enabled</span>
+          </div>
+          <div style="background: #f1f5f9; height: 215px; border-radius: 8px; border: 1px dashed var(--border); display: grid; place-items: center;">
+            <div style="text-align: center; color: var(--muted);">
+              <div style="font-size: 2rem; margin-bottom: 8px;">📍</div>
+              <div style="font-size: 0.875rem;">Google Maps API Integration</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card" style="margin-top: 32px;">
+        <div class="card-header">
+          <h3>Recent History</h3>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Job ID</th>
+                <th>Pickup Location</th>
+                <th>Destination</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = Auth.checkAuth('Driver');
+      if (!user) return;
+
+      document.getElementById('userName').textContent = user.name.split(' ')[0];
+      document.getElementById('userFullName').textContent = user.name;
+      document.getElementById('userInitials').textContent = user.name.split(' ').map(n => n[0]).join('');
+
+      // Initialize UI Interactions
+      UI.initSidebar();
+
+      const renderRequests = () => {
+        const requests = State.getRequests().filter(r => r.user_id === user.id);
+        const earnings = State.getEarnings();
+        const tbody = document.getElementById('requestsTableBody');
+        
+        const completed = requests.filter(r => r.status === 'Completed');
+        document.getElementById('completedCount').textContent = completed.length;
+        
+        const active = requests.find(r => r.status !== 'Completed');
+        document.getElementById('activeStatus').textContent = active ? active.status : 'None';
+        
+        const todayEarned = earnings
+          .filter(e => requests.some(r => r.id === e.request_id))
+          .reduce((sum, e) => sum + e.estimated_earnings, 0);
+        document.getElementById('todayEarned').textContent = `$${todayEarned.toFixed(2)}`;
+
+        tbody.innerHTML = requests.reverse().map(r => `
+          <tr>
+            <td><span style="font-weight: 600; color: var(--accent);">#${r.id}</span></td>
+            <td>${r.pickup_location}</td>
+            <td>${r.destination}</td>
+            <td><span class="badge badge-${r.status.toLowerCase().replace(' ', '-')}">${r.status}</span></td>
+          </tr>
+        `).join('');
+      };
+
+      renderRequests();
+
+      document.getElementById('serviceRequestForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        Driver.addRequest({
+          pickup_location: document.getElementById('pickup').value,
+          destination: document.getElementById('destination').value,
+          user_id: user.id
+        });
+        document.getElementById('serviceRequestForm').reset();
+        renderRequests();
+      });
+    });
+  </script>
+</body>
+</html>

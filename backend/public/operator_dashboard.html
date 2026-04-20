@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operator Hub | Control Center</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-mark">
+        <span>🚙 Control Center</span>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="#">
+          <span>🏠</span> Dashboard
+        </a>
+        <a class="nav-link" href="#">
+          <span>📋</span> Dispatch Queue
+        </a>
+        <a class="nav-link" href="#">
+          <span>📍</span> Fleet Map
+        </a>
+        <a class="nav-link" href="#">
+          <span>🚚</span> Drivers
+        </a>
+        <a class="nav-link" href="#">
+          <span>📈</span> Analytics
+        </a>
+        <a class="nav-link" href="#">
+          <span>👥</span> User Management
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="primary-btn" style="width: 100%; margin-bottom: 24px; border-radius: 12px; height: 48px;">
+          + New Dispatch
+        </button>
+        <a class="nav-link" href="#">
+          <span>❓</span> Support
+        </a>
+        <a class="nav-link" href="#" onclick="State.logout()">
+          <span>🚪</span> Logout
+        </a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="page-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+            <span>☰</span>
+          </button>
+          <div class="page-title">
+            <h1>Operator Hub</h1>
+            <p>Real-time fleet status and active tow requests.</p>
+          </div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid var(--border); padding: 8px 16px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-size: 0.8125rem; font-weight: 600;">
+          <span style="font-size: 0.625rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">System Status</span>
+          <span style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span>
+          <span style="color: #065f46;">All Systems Optimal</span>
+        </div>
+      </header>
+
+      <div style="display: flex; gap: 32px; align-items: flex-start;">
+        <div style="flex-grow: 1;">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon">📅</div>
+              <div class="metric-label">PENDING</div>
+              <div class="metric-value" id="pendingCount">12</div>
+            </div>
+            <div class="metric-card active-jobs">
+              <div class="metric-icon">✔️</div>
+              <div class="metric-label">ACTIVE JOBS</div>
+              <div class="metric-value" id="activeCount">48</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">🚚</div>
+              <div class="metric-label">DRIVERS ONLINE</div>
+              <div class="metric-value">31</div>
+            </div>
+            <div class="metric-card dark">
+              <div class="metric-icon">⏱️</div>
+              <div class="metric-label">AVG RESPONSE</div>
+              <div class="metric-value">14m</div>
+            </div>
+          </div>
+
+          <section>
+            <div class="card-header" style="margin-bottom: 24px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <h3 style="font-size: 1.25rem;">Incoming Tow Requests</h3>
+                <span class="badge badge-urgent" style="font-size: 0.625rem; padding: 2px 8px;">3 URGENT</span>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button class="secondary-btn" style="padding: 8px; border-radius: 10px;">📊</button>
+                <button class="secondary-btn" style="padding: 8px; border-radius: 10px;">🔍</button>
+              </div>
+            </div>
+
+            <div id="requestsContainer">
+              <!-- Request Cards will be injected here -->
+            </div>
+          </section>
+        </div>
+
+        <aside class="right-sidebar">
+          <div class="map-preview">
+            <button class="map-overlay-btn">🗺️ Open Interactive Map</button>
+          </div>
+
+          <div class="card" style="padding: 20px;">
+            <h4 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 20px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Driver Availability</h4>
+            <div class="driver-list">
+              <div class="driver-item">
+                <div class="driver-avatar">JD</div>
+                <div style="font-weight: 600; font-size: 0.875rem;">Joe Dawson</div>
+                <div class="driver-status status-available">Available</div>
+              </div>
+              <div class="driver-item">
+                <div class="driver-avatar">MK</div>
+                <div style="font-weight: 600; font-size: 0.875rem;">Maria Khan</div>
+                <div class="driver-status status-enroute">En Route</div>
+              </div>
+              <div class="driver-item">
+                <div class="driver-avatar">RT</div>
+                <div style="font-weight: 600; font-size: 0.875rem;">Robert T.</div>
+                <div class="driver-status status-offline">Offline</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 20px;">
+            <h4 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 20px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Live Log</h4>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot success"></div>
+                <div class="timeline-content">
+                  <h4>Job #8291 Completed</h4>
+                  <p>2 minutes ago • Driver Maria K.</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot primary"></div>
+                <div class="timeline-content">
+                  <h4>Tow Arrived: I-95</h4>
+                  <p>12 minutes ago • Flatbed unit 04</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <h4>Customer Callback</h4>
+                  <p>24 minutes ago • Dispatch Desk A</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <button class="fab" title="Quick Action">⚡</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = State.getCurrentUser();
+      if (!user || user.role !== 'Operator') { window.location.href = 'index.html'; return; }
+
+      // Sidebar Toggle Logic
+      const shell = document.querySelector('.dashboard-shell');
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.getElementById('sidebarToggle');
+      
+      const toggleSidebar = () => {
+        sidebar.classList.toggle('collapsed');
+        shell.classList.toggle('sidebar-collapsed-state');
+      };
+
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSidebar();
+      });
+
+      // Default to collapsed on mobile
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('collapsed');
+        shell.classList.add('sidebar-collapsed-state');
+      }
+
+      const renderRequests = async () => {
+        const requests = await State.getRequests();
+        const users = await State.getUsers();
+        
+        document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'Pending').length;
+        document.getElementById('activeCount').textContent = requests.filter(r => r.status === 'In Progress').length;
+        
+        const container = document.getElementById('requestsContainer');
+        
+        // Mocking the request list based on the image
+        const mockRequests = [
+          {
+            id: 'R-102',
+            title: 'Silver BMW M3 - Engine Stall',
+            location: 'I-95 North, Exit 12 (Hard Shoulder)',
+            customer: 'Marcus Thorne',
+            distance: '2.4 miles',
+            time: 'Requested 2m ago',
+            type: 'urgent',
+            badge: 'IMMEDIATE ACTION',
+            icon: '🚗'
+          },
+          {
+            id: 'R-103',
+            title: 'Ford F-150 - Flat Tire',
+            location: '442 Oak Street, West Downtown',
+            customer: 'Sarah Jenkins',
+            distance: '4.1 miles',
+            time: 'Requested 8m ago',
+            type: 'standard',
+            badge: 'STANDARD',
+            icon: '🛻'
+          },
+          {
+            id: 'R-104',
+            title: 'Tesla Model 3 - Lockout',
+            location: 'Grand Plaza Parking, B2',
+            customer: 'David Choi',
+            distance: '1.2 miles',
+            time: 'Dispatched 14m ago',
+            type: 'in-progress',
+            badge: 'IN PROGRESS',
+            icon: '🚙'
+          }
+        ];
+
+        container.innerHTML = mockRequests.map(r => `
+          <div class="request-card ${r.type}">
+            <div class="car-image">${r.icon}</div>
+            <div class="request-info">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <div class="request-title">${r.title}</div>
+                  <div style="font-size: 0.8125rem; color: var(--muted); display: flex; align-items: center; gap: 4px;">
+                    📍 ${r.location}
+                  </div>
+                </div>
+                <span class="badge badge-${r.type}">${r.badge}</span>
+              </div>
+              <div class="request-meta">
+                <div class="request-meta-item">👤 ${r.customer}</div>
+                <div class="request-meta-item">📍 ${r.distance} away</div>
+                <div class="request-meta-item">🕒 ${r.time}</div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              ${r.type === 'in-progress' ? 
+                `<button class="secondary-btn" style="border-radius: 10px; font-weight: 700; background: #e0e7ff; color: #4f46e5; border: none; padding: 10px 24px;">Details</button>` :
+                `<button class="primary-btn" style="border-radius: 10px; font-weight: 700; background: #d1fae5; color: #065f46; border: none; padding: 10px 24px;">Accept</button>
+                 <button class="secondary-btn" style="border-radius: 10px; font-weight: 700; border: none; background: transparent; color: var(--muted);">Reject</button>`
+              }
+            </div>
+          </div>
+        `).join('');
+      };
+
+      await renderRequests();
+    });
+  </script>
+</body>
+</html>
