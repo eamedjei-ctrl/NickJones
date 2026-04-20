@@ -110,6 +110,41 @@ const TimeTheme = {
   }
 };
 
+const ScrollReveal = {
+  init: function() {
+    const selector = [
+      '.dashboard-shell > *',
+      '.dashboard-main > *',
+      '.login-card',
+      '.login-header',
+      '.card',
+      '.metrics-grid',
+      '.request-card',
+      '.driver-item',
+      '.timeline-item',
+      '.map-preview'
+    ].join(', ');
+
+    const elements = Array.from(document.querySelectorAll(selector));
+    elements.forEach((el, index) => {
+      el.classList.add('scroll-reveal');
+      el.classList.add(`delay-${(index % 3) + 1}`);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+
+    elements.forEach(el => observer.observe(el));
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   TimeTheme.apply();
+  ScrollReveal.init();
 });
