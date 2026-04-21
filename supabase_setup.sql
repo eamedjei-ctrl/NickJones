@@ -13,7 +13,7 @@ CREATE TABLE requests (
   id TEXT PRIMARY KEY,
   pickup_location TEXT NOT NULL,
   destination TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'Pending' CHECK (status IN ('Pending', 'In Progress', 'Completed')),
+  status TEXT NOT NULL DEFAULT 'Pending' CHECK (status IN ('Pending', 'In Progress', 'Completed', 'Rejected')),
   user_id TEXT REFERENCES users(id)
 );
 
@@ -37,3 +37,8 @@ INSERT INTO requests (id, pickup_location, destination, status, user_id) VALUES
 
 INSERT INTO earnings (id, distance, fuel_cost, estimated_earnings, request_id) VALUES
   ('t1', 12.5, 15.00, 45.00, 'r1');
+
+-- If you already created `requests` without 'Rejected', run in Supabase SQL editor:
+-- ALTER TABLE requests DROP CONSTRAINT IF EXISTS requests_status_check;
+-- ALTER TABLE requests ADD CONSTRAINT requests_status_check
+--   CHECK (status IN ('Pending', 'In Progress', 'Completed', 'Rejected'));

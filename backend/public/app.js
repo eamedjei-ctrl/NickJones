@@ -1,6 +1,6 @@
 // app.js - Shared state and logic for TowPrecision
 
-const API_BASE = '/api';
+const API_BASE = 'http://localhost:3000/api';
 
 // Demo data for testing without Supabase
 const DEMO_DATA = {
@@ -92,6 +92,7 @@ const State = {
       body: JSON.stringify(request)
     });
     const data = await res.json();
+    if (!res.ok) return null;
     return data.request;
   },
 
@@ -102,7 +103,8 @@ const State = {
       body: JSON.stringify({ status })
     });
     const data = await res.json();
-    
+    if (!res.ok) return null;
+
     // If completed, add earnings record
     if (status === 'Completed') {
       await State.addEarningsRecord(requestId);
@@ -144,10 +146,19 @@ const ScrollReveal = {
       '.request-card',
       '.driver-item',
       '.timeline-item',
-      '.map-preview'
+      '.map-preview',
+      '.workflow-lane',
+      '.wizard-steps',
+      '.admin-section'
     ].join(', ');
 
-    const elements = Array.from(document.querySelectorAll(selector));
+    const isLogin = document.body.classList.contains('login-page');
+    const isDriverApp = document.body.classList.contains('driver-app-page');
+    const elements = Array.from(document.querySelectorAll(selector)).filter((el) => {
+      if (isLogin && el.closest('.login-card')) return false;
+      if (isDriverApp && el.closest('.driver-app-main')) return false;
+      return true;
+    });
     elements.forEach((el, index) => {
       el.classList.add('scroll-reveal');
       el.classList.add(`delay-${(index % 3) + 1}`);
@@ -166,7 +177,26 @@ const ScrollReveal = {
   }
 };
 
+const MobileSidebar = {
+  init: function() {
+    const toggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    if (!toggle || !sidebar) return;
+
+    toggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove('collapsed');
+      }
+    });
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   TimeTheme.apply();
   ScrollReveal.init();
+  MobileSidebar.init();
 });

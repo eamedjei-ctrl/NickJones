@@ -2,196 +2,577 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Driver Dashboard | TowPrecision</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Driver | TowPrecision</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="driver-app-page">
   <div class="dashboard-shell">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand-mark">
-        <span>🚚 TowPrecision</span>
-      </div>
-      
-      <div class="nav-section-label">Main Menu</div>
+    <aside class="sidebar driver-app-sidebar" id="sidebar">
+      <div class="brand-mark"><span>TowPrecision</span></div>
+      <div class="nav-section-label">Account</div>
       <nav class="sidebar-nav">
-        <a class="nav-link active" href="#">
-          <span>📋</span> Service Requests
-        </a>
-        <a class="nav-link" href="#">
-          <span>🗺️</span> Active Jobs
-        </a>
-        <a class="nav-link" href="#">
-          <span>💰</span> My Earnings
-        </a>
+        <a class="nav-link" href="index.html"><span>↩</span> Switch account</a>
+        <a class="nav-link" href="#" onclick="State.logout(); return false;"><span>⎋</span> Sign out</a>
       </nav>
-
-      <div class="sidebar-footer">
-        <a class="nav-link" href="#" onclick="State.logout()">
-          <span>🚪</span> Sign Out
-        </a>
-      </div>
     </aside>
 
-    <main class="dashboard-main">
-      <header class="page-header">
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
-            <span>☰</span>
-          </button>
-          <div class="page-title">
-            <h1>Driver Portal</h1>
-            <p>Welcome back, <span id="userName">Driver</span></p>
-          </div>
-        </div>
-        <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
-          <div style="text-align: right;">
-            <div style="font-weight: 600; font-size: 0.875rem;" id="userFullName">Full Name</div>
-            <div style="font-size: 0.75rem; color: var(--muted);">Fleet ID: #D-2024</div>
-          </div>
-          <div style="width: 40px; height: 40px; background: var(--accent); color: white; border-radius: 50%; display: grid; place-items: center; font-weight: 700;" id="userInitials">DR</div>
-        </div>
-      </header>
+    <main class="dashboard-main driver-app-main">
+      <div class="driver-app-frame">
+        <div class="driver-app" id="driverApp">
+          <header class="driver-app-topbar">
+            <button type="button" class="driver-app-menu" id="sidebarToggle" aria-label="Open menu">
+              <span></span><span></span><span></span>
+            </button>
+            <h1 class="driver-app-logo">TowPrecision</h1>
+            <div class="driver-app-avatar" id="userInitials" title="">DR</div>
+          </header>
 
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Completed Jobs</div>
-          <div class="metric-value" id="completedCount">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Active Request</div>
-          <div class="metric-value" id="activeStatus">None</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Today's Earnings</div>
-          <div class="metric-value" id="todayEarned">$0.00</div>
+          <div class="driver-app-scroll">
+            <!-- Dashboard -->
+            <div class="driver-app-panel is-active" data-panel="dashboard" id="panelDashboard">
+              <section class="driver-live-card">
+                <div class="driver-live-map" aria-hidden="true">
+                  <span class="driver-live-badge">Live location</span>
+                  <div class="driver-live-pin"></div>
+                </div>
+                <div class="driver-live-footer">
+                  <div class="driver-live-coords">
+                    <span class="driver-section-label">Current coordinates</span>
+                    <p class="driver-coords-text" id="driverCoords">Acquiring GPS…</p>
+                  </div>
+                  <a class="driver-share-wa" id="liveWhatsAppBtn" href="#" target="_blank" rel="noopener">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Share on WhatsApp
+                  </a>
+                </div>
+              </section>
+
+              <div class="driver-section-head">
+                <h2 class="driver-section-title">Current dispatch queue</h2>
+              </div>
+              <div id="dispatchQueueMount"></div>
+
+              <button type="button" class="driver-cta-navy" id="openRequestSheet" aria-expanded="false">
+                <span class="driver-cta-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16l4.5-4.5M15 7l-3 10M9 7l3 10M5 20h14M7 16h10M12 4v3"/></svg>
+                </span>
+                <span class="driver-cta-title">Request tow</span>
+                <span class="driver-cta-sub">Log new emergency service</span>
+              </button>
+
+              <div class="driver-section-head driver-section-head--spaced">
+                <h2 class="driver-section-title">System telemetry</h2>
+              </div>
+              <div class="driver-telemetry">
+                <div class="driver-tel-cell">
+                  <span class="driver-tel-value" id="telJobs">0</span>
+                  <span class="driver-tel-label">Total jobs</span>
+                </div>
+                <div class="driver-tel-cell">
+                  <span class="driver-tel-value" id="telEfficiency">—</span>
+                  <span class="driver-tel-label">Efficiency</span>
+                </div>
+                <div class="driver-tel-cell">
+                  <span class="driver-tel-value" id="telDrive">02h</span>
+                  <span class="driver-tel-label">Drive time</span>
+                </div>
+                <div class="driver-tel-cell driver-tel-cell--duty">
+                  <span class="driver-tel-value" id="telDuty">On</span>
+                  <span class="driver-tel-label">Duty state</span>
+                </div>
+              </div>
+
+              <section class="driver-unit-card">
+                <div class="driver-unit-thumb" aria-hidden="true"></div>
+                <div class="driver-unit-body">
+                  <p class="driver-unit-name">Unit <span id="unitNumber">704</span> (standard)</p>
+                  <p class="driver-unit-meta">Fleet authority · Active</p>
+                  <div class="driver-unit-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                </div>
+              </section>
+            </div>
+
+            <!-- Requests -->
+            <div class="driver-app-panel" data-panel="requests" id="panelRequests" hidden>
+              <div class="driver-section-head">
+                <h2 class="driver-section-title driver-section-title--bar">Incoming requests</h2>
+                <span class="driver-pill" id="activeRequestBadge">0 active</span>
+              </div>
+              <div id="requestsCardsMount"></div>
+              <div class="driver-table-wrap">
+                <table class="driver-mini-table">
+                  <thead>
+                    <tr><th>ID</th><th>Pickup</th><th>Destination</th><th>Status</th></tr>
+                  </thead>
+                  <tbody id="requestsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Earnings -->
+            <div class="driver-app-panel" data-panel="earnings" id="panelEarnings" hidden>
+              <div class="driver-section-head">
+                <h2 class="driver-section-title">Earnings</h2>
+              </div>
+              <div class="driver-earnings-hero">
+                <span class="driver-earnings-label">Recorded payout</span>
+                <p class="driver-earnings-value" id="earningsHero">$0.00</p>
+                <p class="driver-earnings-hint">From completed jobs tied to your account</p>
+              </div>
+              <div class="driver-telemetry driver-telemetry--single">
+                <div class="driver-tel-cell">
+                  <span class="driver-tel-value" id="earningsJobs">0</span>
+                  <span class="driver-tel-label">Completed</span>
+                </div>
+                <div class="driver-tel-cell">
+                  <span class="driver-tel-value" id="earningsActive">—</span>
+                  <span class="driver-tel-label">Open job</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="driver-app-panel" data-panel="settings" id="panelSettings" hidden>
+              <div class="driver-section-head">
+                <h2 class="driver-section-title">Settings</h2>
+              </div>
+              <div class="driver-settings-list">
+                <a class="driver-settings-row" href="index.html">Switch account</a>
+                <button type="button" class="driver-settings-row" id="settingsLogout">Sign out</button>
+              </div>
+            </div>
+          </div>
+
+          <nav class="driver-app-bottomnav" aria-label="Primary">
+            <div class="driver-app-bottomnav-inner">
+              <button type="button" class="driver-nav-item is-active" data-nav="dashboard" aria-current="page">
+                <span class="driver-nav-icon" aria-hidden="true">▦</span>
+                <span>Dashboard</span>
+              </button>
+              <button type="button" class="driver-nav-item" data-nav="requests">
+                <span class="driver-nav-icon" aria-hidden="true">🚛</span>
+                <span>Requests</span>
+              </button>
+              <button type="button" class="driver-nav-item" data-nav="earnings">
+                <span class="driver-nav-icon" aria-hidden="true">$</span>
+                <span>Earnings</span>
+              </button>
+              <button type="button" class="driver-nav-item" data-nav="settings">
+                <span class="driver-nav-icon" aria-hidden="true">⚙</span>
+                <span>Settings</span>
+              </button>
+            </div>
+          </nav>
         </div>
       </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
-        <section class="card">
-          <div class="card-header">
-            <h3>New Service Request</h3>
-          </div>
-          <form id="serviceRequestForm">
-            <div class="form-group">
-              <label for="pickup">Pickup Location</label>
-              <input id="pickup" type="text" placeholder="Enter full address" required />
-            </div>
-            <div class="form-group">
-              <label for="destination">Destination</label>
-              <input id="destination" type="text" placeholder="Enter full address" required />
-            </div>
-            <button class="primary-btn" type="submit" style="width: 100%;">Submit Request</button>
-          </form>
-        </section>
-
-        <section class="card">
-          <div class="card-header">
-            <h3>Route Preview</h3>
-            <span style="font-size: 0.75rem; color: var(--muted);">Real-time tracking enabled</span>
-          </div>
-          <div style="background: #f1f5f9; height: 215px; border-radius: 8px; border: 1px dashed var(--border); display: grid; place-items: center;">
-            <div style="text-align: center; color: var(--muted);">
-              <div style="font-size: 2rem; margin-bottom: 8px;">📍</div>
-              <div style="font-size: 0.875rem;">Google Maps API Integration</div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <section class="card" style="margin-top: 32px;">
-        <div class="card-header">
-          <h3>Recent History</h3>
-        </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Job ID</th>
-                <th>Pickup Location</th>
-                <th>Destination</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="requestsTableBody"></tbody>
-          </table>
-        </div>
-      </section>
     </main>
   </div>
 
+  <!-- Request sheet -->
+  <div class="driver-sheet-overlay" id="requestSheetOverlay" hidden>
+    <div class="driver-sheet" role="dialog" aria-labelledby="sheetTitle">
+      <div class="driver-sheet-handle" aria-hidden="true"></div>
+      <h2 id="sheetTitle" class="driver-sheet-title">New service request</h2>
+      <p class="driver-sheet-lead">Pickup and destination are sent to dispatch.</p>
+      <form id="serviceRequestForm">
+        <div class="form-group">
+          <label for="pickup">Pickup location</label>
+          <input id="pickup" name="pickup" type="text" placeholder="Address or mile marker" required autocomplete="street-address" />
+        </div>
+        <div class="form-group">
+          <label for="destination">Destination</label>
+          <input id="destination" name="destination" type="text" placeholder="Shop or yard" required />
+        </div>
+        <button type="submit" class="driver-btn-primary-wide">Submit request</button>
+      </form>
+      <button type="button" class="driver-sheet-close" id="closeRequestSheet">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Post-submit: WhatsApp step -->
+  <div class="driver-sheet-overlay" id="shareSheetOverlay" hidden>
+    <div class="driver-sheet driver-sheet--compact" role="dialog" aria-labelledby="shareTitle">
+      <h2 id="shareTitle" class="driver-sheet-title">Share with dispatch</h2>
+      <p class="driver-sheet-lead">Request <strong id="confirmRequestId">#</strong> is queued. Send details on WhatsApp.</p>
+      <a class="driver-share-wa driver-share-wa--full" id="whatsappShareBtn" href="#" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Open WhatsApp
+      </a>
+      <a class="driver-btn-secondary-wide" id="mapsRouteBtn" href="#" target="_blank" rel="noopener">Open route in Google Maps</a>
+      <button type="button" class="driver-btn-secondary-wide" id="newRequestBtn">New request</button>
+    </div>
+  </div>
+
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const user = State.getCurrentUser();
-      if (!user || user.role !== 'Driver') { window.location.href = 'index.html'; return; }
+    (function () {
+      var FLEET_WHATSAPP_E164 = '';
 
-      document.getElementById('userName').textContent = user.name.split(' ')[0];
-      document.getElementById('userFullName').textContent = user.name;
-      document.getElementById('userInitials').textContent = user.name.split(' ').map(n => n[0]).join('');
-
-      // Sidebar Toggle Logic
-      const shell = document.querySelector('.dashboard-shell');
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.getElementById('sidebarToggle');
-      
-      const toggleSidebar = () => {
-        sidebar.classList.toggle('collapsed');
-        shell.classList.toggle('sidebar-collapsed-state');
-      };
-
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleSidebar();
-      });
-
-      // Default to collapsed on mobile
-      if (window.innerWidth <= 768) {
-        sidebar.classList.add('collapsed');
-        shell.classList.add('sidebar-collapsed-state');
+      function enc(s) {
+        return encodeURIComponent(s);
       }
 
-      const renderRequests = async () => {
-        const requests = (await State.getRequests()).filter(r => r.user_id === user.id);
-        const earnings = await State.getEarnings();
-        const tbody = document.getElementById('requestsTableBody');
-        
-        // Metrics calculation
-        const completed = requests.filter(r => r.status === 'Completed');
-        document.getElementById('completedCount').textContent = completed.length;
-        
-        const active = requests.find(r => r.status !== 'Completed');
-        document.getElementById('activeStatus').textContent = active ? active.status : 'None';
-        
-        const todayEarned = earnings
-          .filter(e => requests.some(r => r.id === e.request_id))
-          .reduce((sum, e) => sum + e.estimated_earnings, 0);
-        document.getElementById('todayEarned').textContent = `$${todayEarned.toFixed(2)}`;
+      function whatsappUrl(message) {
+        var text = enc(message);
+        if (FLEET_WHATSAPP_E164 && String(FLEET_WHATSAPP_E164).replace(/\D/g, '').length >= 10) {
+          return 'https://wa.me/' + String(FLEET_WHATSAPP_E164).replace(/\D/g, '') + '?text=' + text;
+        }
+        return 'https://wa.me/?text=' + text;
+      }
 
-        tbody.innerHTML = requests.reverse().map(r => `
-          <tr>
-            <td><span style="font-weight: 600; color: var(--accent);">#${r.id}</span></td>
-            <td>${r.pickup_location}</td>
-            <td>${r.destination}</td>
-            <td><span class="badge badge-${r.status.toLowerCase().replace(' ', '-')}">${r.status}</span></td>
-          </tr>
-        `).join('');
-      };
+      function mapsDirectionsUrl(origin, destination) {
+        return 'https://www.google.com/maps/dir/?api=1&origin=' + enc(origin) + '&destination=' + enc(destination);
+      }
 
-      await renderRequests();
+      function formatCoords(lat, lng) {
+        var ns = lat >= 0 ? 'N' : 'S';
+        var ew = lng >= 0 ? 'E' : 'W';
+        return Math.abs(lat).toFixed(4) + '° ' + ns + ', ' + Math.abs(lng).toFixed(4) + '° ' + ew;
+      }
 
-      document.getElementById('serviceRequestForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await State.addRequest({
-          pickup_location: document.getElementById('pickup').value,
-          destination: document.getElementById('destination').value,
-          user_id: user.id
+      function unitFromUser(user) {
+        var s = user.id || user.email || 'x';
+        var h = 0;
+        for (var i = 0; i < s.length; i++) h += s.charCodeAt(i);
+        return 700 + (h % 80);
+      }
+
+      function truncate(str, n) {
+        if (!str) return '';
+        return str.length <= n ? str : str.slice(0, n - 1) + '…';
+      }
+
+      function esc(s) {
+        if (!s) return '';
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        var user = State.getCurrentUser();
+        if (!user || user.role !== 'Driver') {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        document.getElementById('userInitials').textContent = user.name
+          .split(' ')
+          .map(function (n) {
+            return n[0];
+          })
+          .join('')
+          .slice(0, 2)
+          .toUpperCase();
+        document.getElementById('userInitials').setAttribute('title', user.name);
+        document.getElementById('unitNumber').textContent = String(unitFromUser(user));
+
+        var shell = document.querySelector('.dashboard-shell');
+        var sidebar = document.getElementById('sidebar');
+        var toggleBtn = document.getElementById('sidebarToggle');
+
+        toggleBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          sidebar.classList.toggle('collapsed');
+          shell.classList.toggle('sidebar-collapsed-state');
         });
-        document.getElementById('serviceRequestForm').reset();
-        await renderRequests();
+
+        if (window.innerWidth <= 900) {
+          sidebar.classList.add('collapsed');
+          shell.classList.add('sidebar-collapsed-state');
+        }
+
+        var coordsEl = document.getElementById('driverCoords');
+        var liveWa = document.getElementById('liveWhatsAppBtn');
+        var fallbackCoords = '41.8781° N, 87.6298° W';
+
+        function setLiveWhatsAppMessage() {
+          var txt =
+            document.getElementById('driverCoords').textContent || fallbackCoords;
+          var msg =
+            'TowPrecision — ' +
+            user.name +
+            '\nLive location: ' +
+            txt +
+            '\n(Sent from driver app)';
+          liveWa.href = whatsappUrl(msg);
+        }
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (pos) {
+              coordsEl.textContent = formatCoords(pos.coords.latitude, pos.coords.longitude);
+              setLiveWhatsAppMessage();
+            },
+            function () {
+              coordsEl.textContent = fallbackCoords;
+              setLiveWhatsAppMessage();
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+          );
+        } else {
+          coordsEl.textContent = fallbackCoords;
+          setLiveWhatsAppMessage();
+        }
+
+        function openSheet(el) {
+          el.hidden = false;
+          document.body.style.overflow = 'hidden';
+        }
+        function closeSheet(el) {
+          el.hidden = true;
+          document.body.style.overflow = '';
+        }
+
+        document.getElementById('openRequestSheet').addEventListener('click', function () {
+          openSheet(document.getElementById('requestSheetOverlay'));
+        });
+        document.getElementById('closeRequestSheet').addEventListener('click', function () {
+          closeSheet(document.getElementById('requestSheetOverlay'));
+        });
+        document.getElementById('requestSheetOverlay').addEventListener('click', function (e) {
+          if (e.target === this) closeSheet(this);
+        });
+
+        document.getElementById('newRequestBtn').addEventListener('click', function () {
+          closeSheet(document.getElementById('shareSheetOverlay'));
+        });
+
+        document.querySelectorAll('.driver-nav-item').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var key = btn.getAttribute('data-nav');
+            document.querySelectorAll('.driver-nav-item').forEach(function (b) {
+              b.classList.toggle('is-active', b === btn);
+              b.removeAttribute('aria-current');
+            });
+            btn.setAttribute('aria-current', 'page');
+            document.querySelectorAll('.driver-app-panel').forEach(function (p) {
+              var on = p.getAttribute('data-panel') === key;
+              p.hidden = !on;
+              p.classList.toggle('is-active', on);
+            });
+          });
+        });
+
+        document.getElementById('settingsLogout').addEventListener('click', function () {
+          State.logout();
+        });
+
+        function cardForRequest(r, userName, opts) {
+          var isEnRoute = r.status === 'In Progress';
+          var isPending = r.status === 'Pending';
+          var borderClass = isEnRoute ? 'driver-queue-card--navy' : isPending ? 'driver-queue-card--brown' : 'driver-queue-card--muted';
+          var badgeClass = isEnRoute ? 'driver-badge--navy' : isPending ? 'driver-badge--brown' : 'driver-badge--gray';
+          var badgeText = isEnRoute ? 'En route' : isPending ? 'Pending approval' : r.status;
+          var prog = isEnRoute ? 62 : isPending ? 18 : 100;
+          var timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+          var mapsHref = mapsDirectionsUrl(r.pickup_location, r.destination);
+
+          var actions =
+            '<div class="driver-queue-actions">' +
+            '<a class="driver-btn-ghost" href="' +
+            mapsHref +
+            '" target="_blank" rel="noopener">View details</a>' +
+            '<a class="driver-btn-navy-sm" href="' +
+            mapsHref +
+            '" target="_blank" rel="noopener">Open route</a>' +
+            '</div>';
+
+          return (
+            '<article class="driver-queue-card ' +
+            borderClass +
+            '">' +
+            '<div class="driver-queue-top">' +
+            '<span class="driver-badge ' +
+            badgeClass +
+            '">' +
+            esc(badgeText) +
+            '</span>' +
+            '<span class="driver-queue-time">' +
+            esc(timeStr) +
+            '</span></div>' +
+            '<h3 class="driver-queue-title">Job #' +
+            esc(r.id) +
+            '</h3>' +
+            '<p class="driver-queue-sub">' +
+            esc(truncate(r.pickup_location, 48)) +
+            ' · ' +
+            esc(truncate(r.destination, 36)) +
+            '</p>' +
+            '<div class="driver-progress" role="progressbar" aria-valuenow="' +
+            prog +
+            '" aria-valuemin="0" aria-valuemax="100"><span style="width:' +
+            prog +
+            '%"></span></div>' +
+            actions +
+            '</article>'
+          );
+        }
+
+        function incomingCard(r) {
+          var urgent = r.status === 'In Progress';
+          var border = urgent ? 'driver-incoming--urgent' : 'driver-incoming--standard';
+          var tier = urgent ? 'Heavy duty tow' : 'Standard recovery';
+          var price = urgent ? '$485.00' : '$120.00';
+          var priLabel = urgent ? 'Urgent priority' : 'Routine';
+          var mapsHref = mapsDirectionsUrl(r.pickup_location, r.destination);
+          return (
+            '<article class="driver-incoming ' +
+            border +
+            '">' +
+            '<div class="driver-incoming-meta"><span>' +
+            esc(tier) +
+            ' · ID #' +
+            esc(r.id) +
+            '</span><div class="driver-incoming-price"><strong>' +
+            esc(price) +
+            '</strong><span class="driver-incoming-pri">' +
+            esc(priLabel) +
+            '</span></div></div>' +
+            '<h3 class="driver-incoming-title">' +
+            esc(truncate(r.pickup_location, 20)) +
+            ' → ' +
+            esc(truncate(r.destination, 24)) +
+            '</h3>' +
+            '<p class="driver-incoming-detail"><span class="driver-pin">📍</span> ' +
+            esc(r.pickup_location) +
+            '</p>' +
+            '<p class="driver-incoming-detail"><span class="driver-arrows">⇄</span> ' +
+            esc(r.destination) +
+            '</p>' +
+            '<div class="driver-incoming-actions">' +
+            '<a class="driver-btn-navy-wide" href="' +
+            mapsHref +
+            '" target="_blank" rel="noopener">Accept route</a>' +
+            '<span class="driver-btn-muted-wide">Contact dispatch for status</span></div></article>'
+          );
+        }
+
+        async function renderAll() {
+          var requests = (await State.getRequests()).filter(function (r) {
+            return r.user_id === user.id;
+          });
+          var earnings = await State.getEarnings();
+
+          var completed = requests.filter(function (r) {
+            return r.status === 'Completed';
+          });
+          var open = requests.filter(function (r) {
+            return r.status !== 'Completed' && r.status !== 'Rejected';
+          });
+          var active = open[0];
+
+          var earned = earnings
+            .filter(function (e) {
+              return requests.some(function (r) {
+                return r.id === e.request_id;
+              });
+            })
+            .reduce(function (sum, e) {
+              return sum + e.estimated_earnings;
+            }, 0);
+
+          document.getElementById('telJobs').textContent = String(completed.length);
+          var eff = completed.length === 0 ? '—' : Math.min(97, 84 + completed.length * 2) + '%';
+          document.getElementById('telEfficiency').textContent = eff;
+          document.getElementById('earningsHero').textContent = '$' + earned.toFixed(2);
+          document.getElementById('earningsJobs').textContent = String(completed.length);
+          document.getElementById('earningsActive').textContent = active ? truncate(active.status, 12) : '—';
+
+          var queueMount = document.getElementById('dispatchQueueMount');
+          var openSorted = open.slice().sort(function (a, b) {
+            var o = { 'In Progress': 0, Pending: 1 };
+            return (o[a.status] ?? 2) - (o[b.status] ?? 2);
+          });
+          if (openSorted.length === 0) {
+            queueMount.innerHTML =
+              '<p class="driver-empty">No active dispatches. Submit a request to appear in the queue.</p>';
+          } else {
+            queueMount.innerHTML = openSorted
+              .slice(0, 3)
+              .map(function (r) {
+                return cardForRequest(r, user.name, {});
+              })
+              .join('');
+          }
+
+          document.getElementById('activeRequestBadge').textContent = open.length + ' active';
+
+          var cardsMount = document.getElementById('requestsCardsMount');
+          if (openSorted.length === 0) {
+            cardsMount.innerHTML =
+              '<p class="driver-empty">No open requests. New jobs appear here after you submit a tow request.</p>';
+          } else {
+            cardsMount.innerHTML = openSorted
+              .slice(0, 4)
+              .map(function (r) {
+                return incomingCard(r);
+              })
+              .join('');
+          }
+
+          document.getElementById('requestsTableBody').innerHTML = requests
+            .slice()
+            .reverse()
+            .map(function (r) {
+              var cls = 'badge-' + r.status.toLowerCase().replace(/\s+/g, '-');
+              return (
+                '<tr><td>#' +
+                esc(r.id) +
+                '</td><td>' +
+                esc(truncate(r.pickup_location, 24)) +
+                '</td><td>' +
+                esc(truncate(r.destination, 24)) +
+                '</td><td><span class="badge ' +
+                cls +
+                '">' +
+                esc(r.status) +
+                '</span></td></tr>'
+              );
+            })
+            .join('');
+        }
+
+        await renderAll();
+
+        document.getElementById('serviceRequestForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var pickup = document.getElementById('pickup').value.trim();
+          var destination = document.getElementById('destination').value.trim();
+          var created = await State.addRequest({
+            pickup_location: pickup,
+            destination: destination,
+            user_id: user.id
+          });
+          if (!created || !created.id) {
+            alert('Could not create request. Is the API running?');
+            return;
+          }
+          closeSheet(document.getElementById('requestSheetOverlay'));
+          document.getElementById('confirmRequestId').textContent = '#' + created.id;
+          var msg =
+            'TowPrecision request ' +
+            created.id +
+            '\nDriver: ' +
+            user.name +
+            '\nPickup: ' +
+            pickup +
+            '\nDestination: ' +
+            destination;
+          document.getElementById('whatsappShareBtn').href = whatsappUrl(msg);
+          document.getElementById('mapsRouteBtn').href = mapsDirectionsUrl(pickup, destination);
+          document.getElementById('serviceRequestForm').reset();
+          openSheet(document.getElementById('shareSheetOverlay'));
+          await renderAll();
+        });
+
+        document.getElementById('shareSheetOverlay').addEventListener('click', function (e) {
+          if (e.target === this) closeSheet(this);
+        });
       });
-    });
+    })();
   </script>
 </body>
 </html>

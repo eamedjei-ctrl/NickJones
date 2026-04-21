@@ -52,6 +52,7 @@ const State = {
       body: JSON.stringify(request)
     });
     const data = await res.json();
+    if (!res.ok) return null;
     return data.request;
   },
 
@@ -62,7 +63,8 @@ const State = {
       body: JSON.stringify({ status })
     });
     const data = await res.json();
-    
+    if (!res.ok) return null;
+
     // If completed, add earnings record
     if (status === 'Completed') {
       await State.addEarningsRecord(requestId);
@@ -104,10 +106,19 @@ const ScrollReveal = {
       '.request-card',
       '.driver-item',
       '.timeline-item',
-      '.map-preview'
+      '.map-preview',
+      '.workflow-lane',
+      '.wizard-steps',
+      '.admin-section'
     ].join(', ');
 
-    const elements = Array.from(document.querySelectorAll(selector));
+    const isLogin = document.body.classList.contains('login-page');
+    const isDriverApp = document.body.classList.contains('driver-app-page');
+    const elements = Array.from(document.querySelectorAll(selector)).filter((el) => {
+      if (isLogin && el.closest('.login-card')) return false;
+      if (isDriverApp && el.closest('.driver-app-main')) return false;
+      return true;
+    });
     elements.forEach((el, index) => {
       el.classList.add('scroll-reveal');
       el.classList.add(`delay-${(index % 3) + 1}`);

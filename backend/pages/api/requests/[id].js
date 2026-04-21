@@ -26,6 +26,7 @@ export default async function handler(req, res) {
       .from('requests')
       .update({ status })
       .eq('id', id)
+      .select()
       .single();
 
     if (error) return res.status(500).json({ error: error.message });

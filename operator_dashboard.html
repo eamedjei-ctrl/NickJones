@@ -8,42 +8,35 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="operator-dashboard">
   <div class="dashboard-shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand-mark">
-        <span>🚙 Control Center</span>
+        <span>🎧 Operator desk</span>
       </div>
-      
+
+      <div class="nav-section-label">Operator workflow</div>
       <nav class="sidebar-nav">
-        <a class="nav-link active" href="#">
-          <span>🏠</span> Dashboard
+        <a class="nav-link active" href="operator_dashboard.html">
+          <span>✅</span> Accept / reject / estimate
         </a>
-        <a class="nav-link" href="#">
-          <span>📋</span> Dispatch Queue
+        <a class="nav-link" href="#queue">
+          <span>📋</span> Dispatch queue
         </a>
-        <a class="nav-link" href="#">
-          <span>📍</span> Fleet Map
+        <a class="nav-link" href="#queue">
+          <span>📍</span> Fleet map (preview)
         </a>
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="drivers.html">
           <span>🚚</span> Drivers
-        </a>
-        <a class="nav-link" href="#">
-          <span>📈</span> Analytics
-        </a>
-        <a class="nav-link" href="#">
-          <span>👥</span> User Management
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <button class="primary-btn" style="width: 100%; margin-bottom: 24px; border-radius: 12px; height: 48px;">
-          + New Dispatch
-        </button>
-        <a class="nav-link" href="#">
-          <span>❓</span> Support
-        </a>
-        <a class="nav-link" href="#" onclick="State.logout()">
+        <p style="font-size: 0.75rem; color: var(--muted); margin: 0 0 12px 12px; line-height: 1.4;">
+          After login: handle each request — <strong style="color: var(--workflow-operator);">accept</strong>,
+          <strong>reject</strong>, or run an <strong>earnings estimate</strong>.
+        </p>
+        <a class="nav-link" href="#" onclick="State.logout(); return false;">
           <span>🚪</span> Logout
         </a>
       </div>
@@ -52,227 +45,379 @@
     <main class="dashboard-main">
       <header class="page-header">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+          <button type="button" class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">
             <span>☰</span>
           </button>
           <div class="page-title">
-            <h1>Operator Hub</h1>
-            <p>Real-time fleet status and active tow requests.</p>
+            <h1>Operator hub</h1>
+            <p>Request handling and status updates — maps &amp; WhatsApp integrate on the driver side.</p>
           </div>
         </div>
         <div style="background: #ffffff; border: 1px solid var(--border); padding: 8px 16px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-size: 0.8125rem; font-weight: 600;">
-          <span style="font-size: 0.625rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">System Status</span>
-          <span style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span>
-          <span style="color: #065f46;">All Systems Optimal</span>
+          <span style="font-size: 0.625rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Queue</span>
+          <span style="width: 8px; height: 8px; background: var(--workflow-operator); border-radius: 50%;"></span>
+          <span style="color: #065f46;">Live dispatch</span>
         </div>
       </header>
 
-      <div style="display: flex; gap: 32px; align-items: flex-start;">
-        <div style="flex-grow: 1;">
+      <div class="workflow-lane workflow-lane--operator">
+        <p class="workflow-lane__title"><span>⚙️</span> Operator actions</p>
+      </div>
+
+      <div class="dashboard-with-rail" id="queue">
+        <div class="dashboard-with-rail__main">
           <div class="metrics-grid">
-            <div class="metric-card">
+            <div class="metric-card" style="border-left: 4px solid var(--warning);">
               <div class="metric-icon">📅</div>
-              <div class="metric-label">PENDING</div>
-              <div class="metric-value" id="pendingCount">12</div>
+              <div class="metric-label">Pending</div>
+              <div class="metric-value" id="pendingCount">0</div>
             </div>
             <div class="metric-card active-jobs">
               <div class="metric-icon">✔️</div>
-              <div class="metric-label">ACTIVE JOBS</div>
-              <div class="metric-value" id="activeCount">48</div>
+              <div class="metric-label">In progress</div>
+              <div class="metric-value" id="activeCount">0</div>
             </div>
             <div class="metric-card">
               <div class="metric-icon">🚚</div>
-              <div class="metric-label">DRIVERS ONLINE</div>
-              <div class="metric-value">31</div>
+              <div class="metric-label">Drivers in roster</div>
+              <div class="metric-value" id="driverCount">0</div>
             </div>
             <div class="metric-card dark">
               <div class="metric-icon">⏱️</div>
-              <div class="metric-label">AVG RESPONSE</div>
-              <div class="metric-value">14m</div>
+              <div class="metric-label">Completed (all time)</div>
+              <div class="metric-value" id="completedCount">0</div>
             </div>
           </div>
 
           <section>
             <div class="card-header" style="margin-bottom: 24px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <h3 style="font-size: 1.25rem;">Incoming Tow Requests</h3>
-                <span class="badge badge-urgent" style="font-size: 0.625rem; padding: 2px 8px;">3 URGENT</span>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <h3 style="font-size: 1.25rem; margin: 0;">Incoming tow requests</h3>
+                <span class="badge badge-pending" style="font-size: 0.625rem; padding: 2px 8px;">From drivers</span>
               </div>
-              <div style="display: flex; gap: 12px;">
-                <button class="secondary-btn" style="padding: 8px; border-radius: 10px;">📊</button>
-                <button class="secondary-btn" style="padding: 8px; border-radius: 10px;">🔍</button>
-              </div>
+              <button type="button" class="secondary-btn" id="refreshQueueBtn" style="border-radius: 10px;">↻ Refresh</button>
             </div>
 
-            <div id="requestsContainer">
-              <!-- Request Cards will be injected here -->
-            </div>
+            <div id="requestsContainer"></div>
+            <p id="emptyQueueMsg" style="display: none; text-align: center; color: var(--muted); padding: 32px; font-size: 0.9375rem;">
+              No open requests. When drivers submit jobs, they appear here for accept, reject, or estimate.
+            </p>
           </section>
         </div>
 
         <aside class="right-sidebar">
           <div class="map-preview">
-            <button class="map-overlay-btn">🗺️ Open Interactive Map</button>
+            <button type="button" class="map-overlay-btn" id="openMapsHint">🗺️ Google Maps (driver routes)</button>
           </div>
 
           <div class="card" style="padding: 20px;">
-            <h4 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 20px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Driver Availability</h4>
-            <div class="driver-list">
-              <div class="driver-item">
-                <div class="driver-avatar">JD</div>
-                <div style="font-weight: 600; font-size: 0.875rem;">Joe Dawson</div>
-                <div class="driver-status status-available">Available</div>
-              </div>
-              <div class="driver-item">
-                <div class="driver-avatar">MK</div>
-                <div style="font-weight: 600; font-size: 0.875rem;">Maria Khan</div>
-                <div class="driver-status status-enroute">En Route</div>
-              </div>
-              <div class="driver-item">
-                <div class="driver-avatar">RT</div>
-                <div style="font-weight: 600; font-size: 0.875rem;">Robert T.</div>
-                <div class="driver-status status-offline">Offline</div>
-              </div>
-            </div>
+            <h4 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 20px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Driver availability</h4>
+            <div class="driver-list" id="operatorDriverList"></div>
           </div>
 
           <div class="card" style="padding: 20px;">
-            <h4 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 20px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Live Log</h4>
-            <div class="timeline">
-              <div class="timeline-item">
-                <div class="timeline-dot success"></div>
-                <div class="timeline-content">
-                  <h4>Job #8291 Completed</h4>
-                  <p>2 minutes ago • Driver Maria K.</p>
-                </div>
-              </div>
-              <div class="timeline-item">
-                <div class="timeline-dot primary"></div>
-                <div class="timeline-content">
-                  <h4>Tow Arrived: I-95</h4>
-                  <p>12 minutes ago • Flatbed unit 04</p>
-                </div>
-              </div>
-              <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>Customer Callback</h4>
-                  <p>24 minutes ago • Dispatch Desk A</p>
-                </div>
-              </div>
-            </div>
+            <h4 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 20px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Live log</h4>
+            <div class="timeline" id="operatorTimeline"></div>
           </div>
         </aside>
       </div>
     </main>
   </div>
 
-  <button class="fab" title="Quick Action">⚡</button>
+  <div class="modal-overlay" id="estimateModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-labelledby="estimateTitle">
+      <h3 id="estimateTitle">Earnings estimate</h3>
+      <p>Projected figures for dispatch — final amounts are recorded when the job is completed.</p>
+      <div class="estimate-grid">
+        <div class="estimate-row">
+          <span>Est. distance</span>
+          <strong id="estDistance">—</strong>
+        </div>
+        <div class="estimate-row">
+          <span>Fuel cost (est.)</span>
+          <strong id="estFuel">—</strong>
+        </div>
+        <div class="estimate-row">
+          <span>Estimated payout</span>
+          <strong id="estEarnings">—</strong>
+        </div>
+      </div>
+      <button type="button" class="primary-btn" id="estimateCloseBtn" style="width: 100%; background: var(--workflow-operator); box-shadow: 0 4px 14px -2px rgba(5, 150, 105, 0.45);">Close</button>
+    </div>
+  </div>
+
+  <button type="button" class="fab" title="Quick refresh" id="fabRefresh">⚡</button>
 
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const user = State.getCurrentUser();
-      if (!user || user.role !== 'Operator') { window.location.href = 'index.html'; return; }
-
-      // Sidebar Toggle Logic
-      const shell = document.querySelector('.dashboard-shell');
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.getElementById('sidebarToggle');
-      
-      const toggleSidebar = () => {
-        sidebar.classList.toggle('collapsed');
-        shell.classList.toggle('sidebar-collapsed-state');
-      };
-
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleSidebar();
-      });
-
-      // Default to collapsed on mobile
-      if (window.innerWidth <= 768) {
-        sidebar.classList.add('collapsed');
-        shell.classList.add('sidebar-collapsed-state');
+    (function () {
+      function estimateFromRoute(pickup, dest) {
+        var s = (pickup + dest).split('').reduce(function (n, c) {
+          return n + c.charCodeAt(0);
+        }, 0);
+        var dist = Math.round((6 + (s % 42) + (s % 23) / 10) * 10) / 10;
+        var fuel = Math.round(dist * 0.71 * 10) / 10;
+        var earn = Math.round(dist * 3.75 + 38 + (s % 62));
+        return { distance: dist, fuel_cost: fuel, estimated_earnings: earn };
       }
 
-      const renderRequests = async () => {
-        const requests = await State.getRequests();
-        const users = await State.getUsers();
-        
-        document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'Pending').length;
-        document.getElementById('activeCount').textContent = requests.filter(r => r.status === 'In Progress').length;
-        
-        const container = document.getElementById('requestsContainer');
-        
-        // Mocking the request list based on the image
-        const mockRequests = [
-          {
-            id: 'R-102',
-            title: 'Silver BMW M3 - Engine Stall',
-            location: 'I-95 North, Exit 12 (Hard Shoulder)',
-            customer: 'Marcus Thorne',
-            distance: '2.4 miles',
-            time: 'Requested 2m ago',
-            type: 'urgent',
-            badge: 'IMMEDIATE ACTION',
-            icon: '🚗'
-          },
-          {
-            id: 'R-103',
-            title: 'Ford F-150 - Flat Tire',
-            location: '442 Oak Street, West Downtown',
-            customer: 'Sarah Jenkins',
-            distance: '4.1 miles',
-            time: 'Requested 8m ago',
-            type: 'standard',
-            badge: 'STANDARD',
-            icon: '🛻'
-          },
-          {
-            id: 'R-104',
-            title: 'Tesla Model 3 - Lockout',
-            location: 'Grand Plaza Parking, B2',
-            customer: 'David Choi',
-            distance: '1.2 miles',
-            time: 'Dispatched 14m ago',
-            type: 'in-progress',
-            badge: 'IN PROGRESS',
-            icon: '🚙'
+      function pushTimeline(message) {
+        var el = document.getElementById('operatorTimeline');
+        if (!el) return;
+        var row = document.createElement('div');
+        row.className = 'timeline-item';
+        row.innerHTML =
+          '<div class="timeline-dot primary"></div><div class="timeline-content"><h4>' +
+          message +
+          '</h4><p>' +
+          new Date().toLocaleTimeString() +
+          '</p></div>';
+        el.insertBefore(row, el.firstChild);
+        while (el.children.length > 8) el.removeChild(el.lastChild);
+      }
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        var user = State.getCurrentUser();
+        if (!user || user.role !== 'Operator') {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        var shell = document.querySelector('.dashboard-shell');
+        var sidebar = document.getElementById('sidebar');
+        var toggleBtn = document.getElementById('sidebarToggle');
+
+        function toggleSidebar() {
+          sidebar.classList.toggle('collapsed');
+          shell.classList.toggle('sidebar-collapsed-state');
+        }
+
+        toggleBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          toggleSidebar();
+        });
+
+        if (window.innerWidth <= 768) {
+          sidebar.classList.add('collapsed');
+          shell.classList.add('sidebar-collapsed-state');
+        }
+
+        var modal = document.getElementById('estimateModal');
+
+        function openEstimate(pickup, dest) {
+          var e = estimateFromRoute(pickup, dest);
+          document.getElementById('estDistance').textContent = e.distance + ' mi';
+          document.getElementById('estFuel').textContent = '$' + e.fuel_cost.toFixed(2);
+          document.getElementById('estEarnings').textContent = '$' + e.estimated_earnings.toFixed(2);
+          modal.classList.add('is-open');
+          modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeEstimate() {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.getElementById('estimateCloseBtn').addEventListener('click', closeEstimate);
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closeEstimate();
+        });
+
+        document.getElementById('openMapsHint').addEventListener('click', function () {
+          window.open('https://www.google.com/maps', '_blank', 'noopener');
+        });
+
+        document.getElementById('fabRefresh').addEventListener('click', function () {
+          renderRequests();
+        });
+
+        async function renderRequests() {
+          var requests = await State.getRequests();
+          var users = await State.getUsers();
+          var byId = {};
+          users.forEach(function (u) {
+            byId[u.id] = u;
+          });
+
+          var drivers = users.filter(function (u) {
+            return u.role === 'Driver';
+          });
+          document.getElementById('driverCount').textContent = drivers.length;
+
+          document.getElementById('pendingCount').textContent = requests.filter(function (r) {
+            return r.status === 'Pending';
+          }).length;
+          document.getElementById('activeCount').textContent = requests.filter(function (r) {
+            return r.status === 'In Progress';
+          }).length;
+          document.getElementById('completedCount').textContent = requests.filter(function (r) {
+            return r.status === 'Completed';
+          }).length;
+
+          var listEl = document.getElementById('operatorDriverList');
+          listEl.innerHTML = drivers
+            .slice(0, 6)
+            .map(function (d) {
+              var initials = d.name
+                .split(' ')
+                .map(function (x) {
+                  return x[0];
+                })
+                .join('');
+              return (
+                '<div class="driver-item"><div class="driver-avatar">' +
+                initials +
+                '</div><div style="font-weight: 600; font-size: 0.875rem;">' +
+                d.name +
+                '</div><div class="driver-status status-available">Roster</div></div>'
+              );
+            })
+            .join('');
+
+          var open = requests.filter(function (r) {
+            return r.status === 'Pending' || r.status === 'In Progress';
+          });
+          var container = document.getElementById('requestsContainer');
+          var empty = document.getElementById('emptyQueueMsg');
+
+          if (open.length === 0) {
+            container.innerHTML = '';
+            empty.style.display = 'block';
+            return;
           }
-        ];
+          empty.style.display = 'none';
 
-        container.innerHTML = mockRequests.map(r => `
-          <div class="request-card ${r.type}">
-            <div class="car-image">${r.icon}</div>
-            <div class="request-info">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                  <div class="request-title">${r.title}</div>
-                  <div style="font-size: 0.8125rem; color: var(--muted); display: flex; align-items: center; gap: 4px;">
-                    📍 ${r.location}
-                  </div>
-                </div>
-                <span class="badge badge-${r.type}">${r.badge}</span>
-              </div>
-              <div class="request-meta">
-                <div class="request-meta-item">👤 ${r.customer}</div>
-                <div class="request-meta-item">📍 ${r.distance} away</div>
-                <div class="request-meta-item">🕒 ${r.time}</div>
-              </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              ${r.type === 'in-progress' ? 
-                `<button class="secondary-btn" style="border-radius: 10px; font-weight: 700; background: #e0e7ff; color: #4f46e5; border: none; padding: 10px 24px;">Details</button>` :
-                `<button class="primary-btn" style="border-radius: 10px; font-weight: 700; background: #d1fae5; color: #065f46; border: none; padding: 10px 24px;">Accept</button>
-                 <button class="secondary-btn" style="border-radius: 10px; font-weight: 700; border: none; background: transparent; color: var(--muted);">Reject</button>`
+          container.innerHTML = open
+            .slice()
+            .reverse()
+            .map(function (r) {
+              var driver = byId[r.user_id];
+              var name = driver ? driver.name : 'Unknown driver';
+              var isPending = r.status === 'Pending';
+              var isProg = r.status === 'In Progress';
+              var type = isProg ? 'in-progress' : 'standard';
+              var badge = isProg ? 'IN PROGRESS' : 'PENDING';
+              var actions = '';
+              if (isPending) {
+                actions =
+                  '<div class="operator-actions">' +
+                  '<button type="button" class="primary-btn accept-btn" data-action="accept" data-id="' +
+                  r.id +
+                  '" style="border-radius: 10px; padding: 10px 16px;">✓ Accept</button>' +
+                  '<button type="button" class="secondary-btn reject-btn" data-action="reject" data-id="' +
+                  r.id +
+                  '" style="border-radius: 10px; padding: 10px 16px;">✕ Reject</button>' +
+                  '<button type="button" class="primary-btn estimate-btn" data-action="estimate" data-pickup="' +
+                  encAttr(r.pickup_location) +
+                  '" data-dest="' +
+                  encAttr(r.destination) +
+                  '" style="border-radius: 10px; padding: 10px 16px;">$ Estimate</button>' +
+                  '</div>';
+              } else {
+                actions =
+                  '<div class="operator-actions">' +
+                  '<button type="button" class="primary-btn" data-action="complete" data-id="' +
+                  r.id +
+                  '" style="border-radius: 10px; padding: 10px 16px; background: var(--primary);">Mark completed</button>' +
+                  '<button type="button" class="secondary-btn estimate-btn" data-action="estimate" data-pickup="' +
+                  encAttr(r.pickup_location) +
+                  '" data-dest="' +
+                  encAttr(r.destination) +
+                  '" style="border-radius: 10px; padding: 10px 16px;">$ Re-run estimate</button>' +
+                  '</div>';
               }
-            </div>
-          </div>
-        `).join('');
-      };
+              return (
+                '<div class="request-card ' +
+                type +
+                '" data-request-id="' +
+                r.id +
+                '">' +
+                '<div class="car-image">🚗</div>' +
+                '<div class="request-info">' +
+                '<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">' +
+                '<div>' +
+                '<div class="request-title">Request #' +
+                r.id +
+                '</div>' +
+                '<div style="font-size: 0.8125rem; color: var(--muted);">📍 ' +
+                r.pickup_location +
+                ' → ' +
+                r.destination +
+                '</div></div>' +
+                '<span class="badge badge-' +
+                (isProg ? 'in-progress' : 'pending') +
+                '">' +
+                badge +
+                '</span></div>' +
+                '<div class="request-meta">' +
+                '<div class="request-meta-item">👤 ' +
+                name +
+                '</div>' +
+                '<div class="request-meta-item">📋 ' +
+                r.status +
+                '</div></div></div>' +
+                actions +
+                '</div>'
+              );
+            })
+            .join('');
+        }
 
-      await renderRequests();
-    });
+        function encAttr(s) {
+          if (!s) return '';
+          return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;');
+        }
+
+        document.getElementById('requestsContainer').addEventListener('click', async function (ev) {
+          var btn = ev.target.closest('[data-action]');
+          if (!btn) return;
+          var id = btn.getAttribute('data-id');
+          var action = btn.getAttribute('data-action');
+          if (action === 'estimate') {
+            openEstimate(btn.getAttribute('data-pickup') || '', btn.getAttribute('data-dest') || '');
+            pushTimeline('Estimate viewed for request');
+            return;
+          }
+          if (action === 'accept' && id) {
+            var okA = await State.updateRequestStatus(id, 'In Progress');
+            if (!okA) {
+              alert('Could not accept request. Check API and database.');
+              return;
+            }
+            pushTimeline('Accepted request #' + id);
+            await renderRequests();
+            return;
+          }
+          if (action === 'reject' && id) {
+            if (!confirm('Reject this request? The driver will see Rejected status.')) return;
+            var okR = await State.updateRequestStatus(id, 'Rejected');
+            if (!okR) {
+              alert('Could not reject. Ensure Supabase allows status Rejected (see supabase_setup.sql).');
+              return;
+            }
+            pushTimeline('Rejected request #' + id);
+            await renderRequests();
+            return;
+          }
+          if (action === 'complete' && id) {
+            var okC = await State.updateRequestStatus(id, 'Completed');
+            if (!okC) {
+              alert('Could not complete request.');
+              return;
+            }
+            pushTimeline('Completed request #' + id);
+            await renderRequests();
+          }
+        });
+
+        document.getElementById('refreshQueueBtn').addEventListener('click', renderRequests);
+
+        await renderRequests();
+      });
+    })();
   </script>
 </body>
 </html>

@@ -5,41 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Overview | TowPrecision</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="admin-dashboard">
   <div class="dashboard-shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand-mark">
-        <span>🚚 TowPrecision</span>
+        <span>🛡️ Admin</span>
       </div>
-      
-      <div class="nav-section-label">Fleet Overview</div>
+
+      <div class="nav-section-label">Administrator workflow</div>
       <nav class="sidebar-nav">
-        <a class="nav-link active" href="#">
-          <span>📊</span> System Dashboard
+        <a class="nav-link active" href="#" data-admin-section="stats">
+          <span>📊</span> View statistics
         </a>
-        <a class="nav-link" href="#">
-          <span>👥</span> User Management
+        <a class="nav-link" href="#" data-admin-section="users">
+          <span>👥</span> Manage users
         </a>
-        <a class="nav-link" href="#">
-          <span>💵</span> Financial Records
+        <a class="nav-link" href="#" data-admin-section="broadcast">
+          <span>✈️</span> Broadcast messages
         </a>
       </nav>
 
-      <div class="nav-section-label">Administration</div>
+      <div class="nav-section-label">More</div>
       <nav class="sidebar-nav">
-        <a class="nav-link" href="#">
-          <span>⚙️</span> System Settings
+        <a class="nav-link" href="#" data-admin-section="stats">
+          <span>💵</span> Financial records
         </a>
-        <a class="nav-link" href="#">
-          <span>🛡️</span> Security Logs
+        <a class="nav-link" href="#" data-admin-section="stats">
+          <span>⚙️</span> System snapshot
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <a class="nav-link" href="#" onclick="State.logout()">
-          <span>🚪</span> Sign Out
+        <a class="nav-link" href="#" onclick="State.logout(); return false;">
+          <span>🚪</span> Sign out
         </a>
       </div>
     </aside>
@@ -47,43 +48,107 @@
     <main class="dashboard-main">
       <header class="page-header">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+          <button type="button" class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">
             <span>☰</span>
           </button>
           <div class="page-title">
-            <h1>System Overview</h1>
-            <p>Fleet-wide metrics and financial performance</p>
+            <h1>System overview</h1>
+            <p>Monitoring, roster management, and fleet-wide broadcasts.</p>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="secondary-btn" style="height: 36px; padding: 0 16px; font-size: 0.8rem;">Export Report</button>
-          <div style="width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: grid; place-items: center; font-weight: 700;">AD</div>
+          <button type="button" class="secondary-btn" style="height: 36px; padding: 0 16px; font-size: 0.8rem;" id="exportReportBtn">Export report</button>
+          <div style="width: 40px; height: 40px; background: var(--workflow-admin); color: white; border-radius: 50%; display: grid; place-items: center; font-weight: 700;" id="adminAvatar">A</div>
         </div>
       </header>
 
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Total Revenue</div>
-          <div class="metric-value" id="totalEarnings">$0.00</div>
-          <div style="font-size: 0.75rem; color: var(--success); font-weight: 600; margin-top: 4px;">↑ 12% from last month</div>
+      <div class="workflow-lane workflow-lane--admin">
+        <p class="workflow-lane__title"><span>🗄️</span> Admin actions</p>
+      </div>
+
+      <div id="adminSectionStats" class="admin-section">
+        <div class="metrics-grid">
+          <div class="metric-card" style="border-left: 4px solid var(--workflow-admin);">
+            <div class="metric-label">Total revenue (earnings records)</div>
+            <div class="metric-value" id="totalEarnings">$0.00</div>
+            <div style="font-size: 0.75rem; color: var(--success); font-weight: 600; margin-top: 4px;">Fleet financials</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total jobs</div>
+            <div class="metric-value" id="totalRequests">0</div>
+            <div style="font-size: 0.75rem; color: var(--muted); font-weight: 500; margin-top: 4px;"><span id="completedReqCount">0</span> completed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Users</div>
+            <div class="metric-value" id="totalUsers">0</div>
+            <div style="font-size: 0.75rem; color: var(--muted); font-weight: 500; margin-top: 4px;">Drivers, operators, admins</div>
+          </div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">Total Jobs</div>
-          <div class="metric-value" id="totalRequests">0</div>
-          <div style="font-size: 0.75rem; color: var(--muted); font-weight: 500; margin-top: 4px;">98% completion rate</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Active Users</div>
-          <div class="metric-value" id="totalUsers">0</div>
-          <div style="font-size: 0.75rem; color: var(--success); font-weight: 600; margin-top: 4px;">All systems nominal</div>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>System performance</h3>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px;">
+            <div style="text-align: center;">
+              <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">UPTIME</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--success);">99.9%</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">PENDING NOW</div>
+              <div style="font-size: 1.25rem; font-weight: 700;" id="statPending">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">IN PROGRESS</div>
+              <div style="font-size: 1.25rem; font-weight: 700;" id="statProgress">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">REJECTED</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--danger);" id="statRejected">0</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="dashboard-split">
+          <section class="card">
+            <div class="card-header">
+              <h3>Recent financials</h3>
+              <span style="font-size: 0.75rem; color: var(--muted);">Last 10 transactions</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Job ID</th>
+                    <th>Distance</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody id="earningsTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header">
+              <h3>Request pipeline</h3>
+            </div>
+            <p style="font-size: 0.875rem; color: var(--muted); margin: 0 0 16px;">
+              Summary matches operator dispatch — detailed roster is under <strong>Manage users</strong>.
+            </p>
+            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.875rem; line-height: 1.8;">
+              <li>Drivers submit requests → operators accept / reject / estimate.</li>
+              <li>Maps &amp; WhatsApp are used on the driver workflow for location sharing.</li>
+              <li>Completing a job creates an earnings record (see table).</li>
+            </ul>
+          </section>
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+      <div id="adminSectionUsers" class="admin-section" hidden>
         <section class="card">
           <div class="card-header">
-            <h3>Fleet User Roster</h3>
-            <button class="primary-btn" style="height: 32px; padding: 0 12px; font-size: 0.75rem;">Add User</button>
+            <h3>Fleet user roster</h3>
+            <button type="button" class="primary-btn" style="height: 32px; padding: 0 12px; font-size: 0.75rem; background: var(--workflow-admin); box-shadow: 0 4px 14px -2px rgba(124, 58, 237, 0.35);" id="addUserPlaceholderBtn">Add user</button>
           </div>
           <div class="table-container">
             <table>
@@ -98,111 +163,242 @@
             </table>
           </div>
         </section>
+      </div>
 
+      <div id="adminSectionBroadcast" class="admin-section" hidden>
         <section class="card">
           <div class="card-header">
-            <h3>Recent Financials</h3>
-            <span style="font-size: 0.75rem; color: var(--muted);">Last 10 transactions</span>
+            <h3>Broadcast to fleet</h3>
+            <span style="font-size: 0.75rem; color: var(--muted);">Demo: messages are stored in this browser</span>
           </div>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Job ID</th>
-                  <th>Distance</th>
-                  <th>Revenue</th>
-                </tr>
-              </thead>
-              <tbody id="earningsTableBody"></tbody>
-            </table>
+          <p style="font-size: 0.875rem; color: var(--muted); margin: 0 0 16px;">
+            Send a notice to all drivers and operators (workflow: administrator → broadcast). In production this would connect to push, SMS, or WhatsApp Business.
+          </p>
+          <div class="form-group">
+            <label for="broadcastTitle">Title</label>
+            <input id="broadcastTitle" type="text" placeholder="e.g. Weather advisory — I-95" />
+          </div>
+          <div class="form-group">
+            <label for="broadcastBody">Message</label>
+            <textarea id="broadcastBody" rows="4" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.875rem;" placeholder="Your broadcast text..."></textarea>
+          </div>
+          <button type="button" class="primary-btn" id="sendBroadcastBtn" style="background: var(--workflow-admin); box-shadow: 0 4px 14px -2px rgba(124, 58, 237, 0.4);">
+            Send broadcast
+          </button>
+          <div class="broadcast-log">
+            <strong style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);">Sent history (this device)</strong>
+            <ul id="broadcastLogList"></ul>
           </div>
         </section>
       </div>
-
-      <section class="card" style="margin-top: 32px;">
-        <div class="card-header">
-          <h3>System Performance</h3>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
-          <div style="text-align: center;">
-            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">UPTIME</div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--success);">99.9%</div>
-          </div>
-          <div style="text-align: center;">
-            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">LATENCY</div>
-            <div style="font-size: 1.25rem; font-weight: 700;">45ms</div>
-          </div>
-          <div style="text-align: center;">
-            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">ACTIVE DISPATCHERS</div>
-            <div style="font-size: 1.25rem; font-weight: 700;">4</div>
-          </div>
-          <div style="text-align: center;">
-            <div style="color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;">FLEET HEALTH</div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--success);">Optimal</div>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const user = State.getCurrentUser();
-      if (!user || user.role !== 'Administrator') { window.location.href = 'index.html'; return; }
+    (function () {
+      var STORAGE_KEY = 'towprecision_broadcasts';
 
-      // Sidebar Toggle Logic
-      const shell = document.querySelector('.dashboard-shell');
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.getElementById('sidebarToggle');
-      
-      const toggleSidebar = () => {
-        sidebar.classList.toggle('collapsed');
-        shell.classList.toggle('sidebar-collapsed-state');
-      };
-
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleSidebar();
-      });
-
-      // Default to collapsed on mobile
-      if (window.innerWidth <= 768) {
-        sidebar.classList.add('collapsed');
-        shell.classList.add('sidebar-collapsed-state');
+      function loadBroadcasts() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        } catch (e) {
+          return [];
+        }
       }
 
-      const renderData = async () => {
-        const users = await State.getUsers();
-        const requests = await State.getRequests();
-        const earnings = await State.getEarnings();
+      function saveBroadcast(entry) {
+        var list = loadBroadcasts();
+        list.unshift(entry);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 50)));
+        renderBroadcastLog();
+      }
 
-        document.getElementById('totalUsers').textContent = users.length;
-        document.getElementById('totalRequests').textContent = requests.length;
-        const totalEarned = earnings.reduce((acc, curr) => acc + curr.estimated_earnings, 0);
-        document.getElementById('totalEarnings').textContent = `$${totalEarned.toFixed(2)}`;
+      function renderBroadcastLog() {
+        var ul = document.getElementById('broadcastLogList');
+        if (!ul) return;
+        var list = loadBroadcasts();
+        if (list.length === 0) {
+          ul.innerHTML = '<li style="border: none; color: var(--muted);">No broadcasts yet.</li>';
+          return;
+        }
+        ul.innerHTML = list
+          .map(function (b) {
+            return (
+              '<li><strong>' +
+              escapeHtml(b.title) +
+              '</strong><br /><span style="color: var(--muted);">' +
+              escapeHtml(b.body) +
+              '</span><br /><small style="color: var(--muted);">' +
+              b.at +
+              '</small></li>'
+            );
+          })
+          .join('');
+      }
 
-        document.getElementById('usersTableBody').innerHTML = users.map(u => `
-          <tr>
-            <td>
-              <div style="font-weight: 600;">${u.name}</div>
-              <div style="font-size: 0.75rem; color: var(--muted);">${u.email}</div>
-            </td>
-            <td><span style="font-size: 0.8rem; font-weight: 500;">${u.role}</span></td>
-            <td><span class="badge badge-completed">Active</span></td>
-          </tr>
-        `).join('');
+      function escapeHtml(s) {
+        if (!s) return '';
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
 
-        document.getElementById('earningsTableBody').innerHTML = earnings.slice(-10).reverse().map(e => `
-          <tr>
-            <td><span style="font-weight: 600; color: var(--accent);">#${e.request_id}</span></td>
-            <td>${e.distance} mi</td>
-            <td><span style="font-weight: 600; color: var(--success);">+$${e.estimated_earnings.toFixed(2)}</span></td>
-          </tr>
-        `).join('');
-      };
+      document.addEventListener('DOMContentLoaded', async function () {
+        var user = State.getCurrentUser();
+        if (!user || user.role !== 'Administrator') {
+          window.location.href = 'index.html';
+          return;
+        }
 
-      await renderData();
-    });
+        document.getElementById('adminAvatar').textContent = user.name
+          .split(' ')
+          .map(function (n) {
+            return n[0];
+          })
+          .join('')
+          .slice(0, 2)
+          .toUpperCase();
+
+        var shell = document.querySelector('.dashboard-shell');
+        var sidebar = document.getElementById('sidebar');
+        var toggleBtn = document.getElementById('sidebarToggle');
+
+        function toggleSidebar() {
+          sidebar.classList.toggle('collapsed');
+          shell.classList.toggle('sidebar-collapsed-state');
+        }
+
+        toggleBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          toggleSidebar();
+        });
+
+        if (window.innerWidth <= 768) {
+          sidebar.classList.add('collapsed');
+          shell.classList.add('sidebar-collapsed-state');
+        }
+
+        function showSection(key) {
+          ['stats', 'users', 'broadcast'].forEach(function (k) {
+            var el = document.getElementById('adminSection' + k.charAt(0).toUpperCase() + k.slice(1));
+            if (el) el.hidden = k !== key;
+          });
+          document.querySelectorAll('[data-admin-section]').forEach(function (a) {
+            a.classList.toggle('active', a.getAttribute('data-admin-section') === key);
+          });
+        }
+
+        document.querySelectorAll('[data-admin-section]').forEach(function (link) {
+          link.addEventListener('click', function (e) {
+            e.preventDefault();
+            showSection(link.getAttribute('data-admin-section'));
+          });
+        });
+
+        async function renderData() {
+          var users = await State.getUsers();
+          var requests = await State.getRequests();
+          var earnings = await State.getEarnings();
+
+          document.getElementById('totalUsers').textContent = users.length;
+          document.getElementById('totalRequests').textContent = requests.length;
+          var completed = requests.filter(function (r) {
+            return r.status === 'Completed';
+          }).length;
+          document.getElementById('completedReqCount').textContent = completed;
+          document.getElementById('statPending').textContent = requests.filter(function (r) {
+            return r.status === 'Pending';
+          }).length;
+          document.getElementById('statProgress').textContent = requests.filter(function (r) {
+            return r.status === 'In Progress';
+          }).length;
+          document.getElementById('statRejected').textContent = requests.filter(function (r) {
+            return r.status === 'Rejected';
+          }).length;
+
+          var totalEarned = earnings.reduce(function (acc, curr) {
+            return acc + curr.estimated_earnings;
+          }, 0);
+          document.getElementById('totalEarnings').textContent = '$' + totalEarned.toFixed(2);
+
+          document.getElementById('usersTableBody').innerHTML = users
+            .map(function (u) {
+              var roleClass =
+                u.role === 'Driver'
+                  ? 'badge-pending'
+                  : u.role === 'Operator'
+                    ? 'badge-in-progress'
+                    : 'badge-completed';
+              return (
+                '<tr>' +
+                '<td><div style="font-weight: 600;">' +
+                u.name +
+                '</div><div style="font-size: 0.75rem; color: var(--muted);">' +
+                u.email +
+                '</div></td>' +
+                '<td><span style="font-size: 0.8rem; font-weight: 500;">' +
+                u.role +
+                '</span></td>' +
+                '<td><span class="badge ' +
+                roleClass +
+                '">Active</span></td>' +
+                '</tr>'
+              );
+            })
+            .join('');
+
+          document.getElementById('earningsTableBody').innerHTML = earnings
+            .slice(-10)
+            .reverse()
+            .map(function (e) {
+              return (
+                '<tr>' +
+                '<td><span style="font-weight: 600; color: var(--workflow-admin);">#' +
+                e.request_id +
+                '</span></td>' +
+                '<td>' +
+                e.distance +
+                ' mi</td>' +
+                '<td><span style="font-weight: 600; color: var(--success);">+$' +
+                e.estimated_earnings.toFixed(2) +
+                '</span></td>' +
+                '</tr>'
+              );
+            })
+            .join('');
+        }
+
+        document.getElementById('sendBroadcastBtn').addEventListener('click', function () {
+          var title = document.getElementById('broadcastTitle').value.trim();
+          var body = document.getElementById('broadcastBody').value.trim();
+          if (!title || !body) {
+            alert('Add a title and message.');
+            return;
+          }
+          saveBroadcast({
+            title: title,
+            body: body,
+            at: new Date().toLocaleString()
+          });
+          document.getElementById('broadcastTitle').value = '';
+          document.getElementById('broadcastBody').value = '';
+        });
+
+        document.getElementById('addUserPlaceholderBtn').addEventListener('click', function () {
+          alert('Connect this button to your user API (POST /users) when ready.');
+        });
+
+        document.getElementById('exportReportBtn').addEventListener('click', function () {
+          alert('Export would generate a CSV/PDF from current statistics.');
+        });
+
+        renderBroadcastLog();
+        await renderData();
+        showSection('stats');
+      });
+    })();
   </script>
 </body>
 </html>

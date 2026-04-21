@@ -3,39 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | TowPrecision Fleet Portal</title>
+  <meta name="description" content="TowPrecision — secure fleet portal for dispatch, drivers, and administrators." />
+  <title>Sign in | TowPrecision Fleet Portal</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <script src="app.js" defer></script>
 </head>
 <body class="login-page">
-  <main class="login-card">
-    <div class="login-header">
-      <div class="login-logo">🚚</div>
-      <h2>Welcome Back</h2>
-      <p>Sign in to your fleet management account</p>
+  <div class="login-layout">
+    <aside class="login-aside" aria-label="Product information">
+      <div class="login-aside-glow" aria-hidden="true"></div>
+      <div class="login-aside-inner">
+        <p class="login-aside-eyebrow">Commercial fleet software</p>
+        <h1 class="login-aside-brand">TowPrecision</h1>
+        <p class="login-aside-lead">
+          Operations hub for dispatch, compliance, and revenue visibility across drivers, operators, and administrators.
+        </p>
+        <ul class="login-aside-list">
+          <li>Role-based access and audit-friendly request history</li>
+          <li>Handoffs to maps and messaging for location context</li>
+          <li>Financial records tied to completed work</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="login-form-column">
+      <main class="login-card">
+        <div class="login-header">
+          <p class="login-kicker">Secure sign-in</p>
+          <h2>Access your workspace</h2>
+          <p class="login-sub">Use your work email. You will be routed to the correct dashboard by role.</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="email">Work email</label>
+            <input id="email" type="email" placeholder="you@company.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter your password" required autocomplete="current-password" />
+          </div>
+
+          <button class="primary-btn login-submit" type="submit">Continue</button>
+
+          <div class="sandbox-callout">
+            <span class="sandbox-callout__label">Evaluation environment</span>
+            <p class="sandbox-callout__text">
+              Driver: <kbd>eli@towprecision.com</kbd><br />
+              Operator: <kbd>sara@towprecision.com</kbd><br />
+              Administrator: <kbd>alex@towprecision.com</kbd>
+            </p>
+          </div>
+        </form>
+      </main>
+
+      <footer class="login-legal">
+        <span>© 2026 TowPrecision</span>
+        <span class="login-legal__sep" aria-hidden="true">·</span>
+        <span>Fleet operations</span>
+      </footer>
     </div>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input id="email" type="email" placeholder="name@company.com" required autocomplete="email" />
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="••••••••" required autocomplete="current-password" />
-      </div>
-
-      <button class="primary-btn" type="submit" style="width: 100%; height: 44px; font-size: 1rem;">Sign In to Dashboard</button>
-      
-      <div class="demo-credentials">
-        <strong>Demo Access</strong><br>
-        Driver: eli@towprecision.com<br>
-        Operator: sara@towprecision.com<br>
-        Admin: alex@towprecision.com
-      </div>
-    </form>
-  </main>
+  </div>
 
   <script>
     // Demo users for testing without Supabase
@@ -48,23 +78,13 @@
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
-      
-      // Try API first, fall back to demo if API fails
-      let user = null;
-      try {
-        user = await State.login(email);
-      } catch (err) {
-        console.warn('API failed, using demo mode:', err);
-        user = DEMO_USERS[email] || null;
-        if (user) State.setCurrentUser(user);
-      }
-      
+      const user = await State.login(email);
       if (user) {
         if (user.role === 'Driver') window.location.href = 'driver_dashboard.html';
         else if (user.role === 'Operator') window.location.href = 'operator_dashboard.html';
         else if (user.role === 'Administrator') window.location.href = 'admin_dashboard.html';
       } else {
-        alert('Invalid email. Use one of the demo emails provided.');
+        alert('Sign-in failed. Check the email address or contact your administrator.');
       }
     });
   </script>

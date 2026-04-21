@@ -13,12 +13,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'pickup_location, destination, and user_id are required' });
     }
 
-    // Generate a simple ID
-    const id = 'r' + Date.now() + Math.random().toString(36).substr(2, 5);
+    const id =
+      globalThis.crypto?.randomUUID?.() ??
+      `r-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
     const { data, error } = await supabase
       .from('requests')
       .insert([{ id, pickup_location, destination, status: 'Pending', user_id }])
+      .select()
       .single();
 
     if (error) return res.status(500).json({ error: error.message });
